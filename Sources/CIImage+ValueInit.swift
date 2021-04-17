@@ -13,7 +13,7 @@ public extension CIImage {
             assertionFailure("Failed to find CIColorMatrix in the system")
             return nil
         }
-        colorMatrixFilter.setValue(CIImage.clear, forKey: kCIInputImageKey)
+        colorMatrixFilter.setValue(CIImage(color: CIColor(red: 0, green: 0, blue: 0, alpha: 0)), forKey: kCIInputImageKey)
         colorMatrixFilter.setValue(values, forKey: "inputBiasVector")
         guard let output = colorMatrixFilter.outputImage else {
             assertionFailure("Failed to create image containing values \(values)")
