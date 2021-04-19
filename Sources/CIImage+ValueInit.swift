@@ -8,7 +8,7 @@ public extension CIImage {
     /// the normal [0..1] range.
     static func containing(values: CIVector) -> CIImage? {
         // use a CIColorMatrix with a clear input image to set the desired
-        // pixel value via the biasVector
+        // pixel value via the biasVector, since the biasVector is not clamped to [0..1]
         guard let colorMatrixFilter = CIFilter(name: "CIColorMatrix") else {
             assertionFailure("Failed to find CIColorMatrix in the system")
             return nil
