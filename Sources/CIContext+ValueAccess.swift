@@ -147,6 +147,96 @@ extension CIContext {
     }
 
 
+    // MARK: - Float16
+
+    /// Reads the RGBA-channel pixel values in Float16 format from the given `image` in the given `rect` and returns them as an array.
+    /// - Parameters:
+    ///   - image: The image to read the pixel values from.
+    ///   - rect: The region that should be read. Must be finite and intersect with the extent of `image`.
+    ///   - colorSpace: The export color space used during rendering. If `nil`, the export color space of the context is used.
+    /// - Returns: An array containing the Float16 pixel values.
+    @available(iOS 14, tvOS 14, *)
+    @available(macOS, unavailable)
+    @available(macCatalyst, unavailable)
+    public func readRGBAhPixelValues(from image: CIImage, in rect: CGRect, colorSpace: CGColorSpace? = nil) -> [Pixel4<Float16>] {
+        return self.readPixelValues(from: image, in: rect, format: .RGBAh, colorSpace: colorSpace, defaultValue: Pixel4<Float16>(repeating: .nan))
+    }
+
+    /// Reads the RG-channel pixel values in Float16 format from the given `image` in the given `rect` and returns them as an array.
+    /// - Parameters:
+    ///   - image: The image to read the pixel values from.
+    ///   - rect: The region that should be read. Must be finite and intersect with the extent of `image`.
+    ///   - colorSpace: The export color space used during rendering. If `nil`, the export color space of the context is used.
+    /// - Returns: An array containing the Float16 pixel values.
+    @available(iOS 14, tvOS 14, *)
+    @available(macOS, unavailable)
+    @available(macCatalyst, unavailable)
+    public func readRGhPixelValues(from image: CIImage, in rect: CGRect, colorSpace: CGColorSpace? = nil) -> [Pixel2<Float16>] {
+        return self.readPixelValues(from: image, in: rect, format: .RGh, colorSpace: colorSpace, defaultValue: Pixel2<Float16>(repeating: .nan))
+    }
+
+    /// Reads the single R-channel pixel values in Float16 format from the given `image` in the given `rect` and returns them as an array.
+    /// - Parameters:
+    ///   - image: The image to read the pixel values from.
+    ///   - rect: The region that should be read. Must be finite and intersect with the extent of `image`.
+    ///   - colorSpace: The export color space used during rendering. If `nil`, the export color space of the context is used.
+    /// - Returns: An array containing the Float16 pixel values.
+    @available(iOS 14, tvOS 14, *)
+    @available(macOS, unavailable)
+    @available(macCatalyst, unavailable)
+    public func readRhPixelValues(from image: CIImage, in rect: CGRect, colorSpace: CGColorSpace? = nil) -> [Float16] {
+        return self.readPixelValues(from: image, in: rect, format: .Rh, colorSpace: colorSpace, defaultValue: Float16.nan)
+    }
+
+    /// Reads the RGBA-channel pixel value in Float16 format from the given `image` at the given `point`.
+    /// - Parameters:
+    ///   - image: The image to read the pixel values from.
+    ///   - point: The point in image space from which to read the pixel value. Must be within the extent of `image`.
+    ///   - colorSpace: The export color space used during rendering. If `nil`, the export color space of the context is used.
+    /// - Returns: The Float16 pixel value.
+    @available(iOS 14, tvOS 14, *)
+    @available(macOS, unavailable)
+    @available(macCatalyst, unavailable)
+    public func readRGBAhPixelValue(from image: CIImage, at point: CGPoint, colorSpace: CGColorSpace? = nil) -> Pixel4<Float16> {
+        let defaultValue = Pixel4<Float16>(repeating: .nan)
+        let rect = CGRect(origin: point, size: CGSize(width: 1, height: 1))
+        let values = self.readRGBAhPixelValues(from: image, in: rect, colorSpace: colorSpace)
+        return values.first ?? defaultValue
+    }
+
+    /// Reads the RG-channel pixel value in Float16 format from the given `image` at the given `point`.
+    /// - Parameters:
+    ///   - image: The image to read the pixel values from.
+    ///   - point: The point in image space from which to read the pixel value. Must be within the extent of `image`.
+    ///   - colorSpace: The export color space used during rendering. If `nil`, the export color space of the context is used.
+    /// - Returns: The Float16 pixel value.
+    @available(iOS 14, tvOS 14, *)
+    @available(macOS, unavailable)
+    @available(macCatalyst, unavailable)
+    public func readRGhPixelValue(from image: CIImage, at point: CGPoint, colorSpace: CGColorSpace? = nil) -> Pixel2<Float16> {
+        let defaultValue = Pixel2<Float16>(repeating: .nan)
+        let rect = CGRect(origin: point, size: CGSize(width: 1, height: 1))
+        let values = self.readRGhPixelValues(from: image, in: rect, colorSpace: colorSpace)
+        return values.first ?? defaultValue
+    }
+
+    /// Reads the single R-channel pixel value in Float16 format from the given `image` at the given `point`.
+    /// - Parameters:
+    ///   - image: The image to read the pixel values from.
+    ///   - point: The point in image space from which to read the pixel value. Must be within the extent of `image`.
+    ///   - colorSpace: The export color space used during rendering. If `nil`, the export color space of the context is used.
+    /// - Returns: The Float16 pixel value.
+    @available(iOS 14, tvOS 14, *)
+    @available(macOS, unavailable)
+    @available(macCatalyst, unavailable)
+    public func readRhPixelValue(from image: CIImage, at point: CGPoint, colorSpace: CGColorSpace? = nil) -> Float16 {
+        let defaultValue = Float16.nan
+        let rect = CGRect(origin: point, size: CGSize(width: 1, height: 1))
+        let values = self.readRhPixelValues(from: image, in: rect, colorSpace: colorSpace)
+        return values.first ?? defaultValue
+    }
+
+
     // MARK: - Internal
 
     private func readPixelValues<PixelType>(from image: CIImage, in rect: CGRect, format: CIFormat, colorSpace: CGColorSpace?, defaultValue: PixelType) -> [PixelType] {
