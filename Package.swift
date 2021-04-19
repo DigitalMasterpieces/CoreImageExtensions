@@ -15,5 +15,9 @@ let package = Package(
             name: "CoreImageExtensions",
             dependencies: [],
             path: "Sources"),
+        .testTarget(
+            name: "CoreImageExtensionsTests",
+            dependencies: ["CoreImageExtensions"],
+            path: "Tests"),
     ]
 )
