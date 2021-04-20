@@ -23,6 +23,7 @@ public extension CIImage {
     }
 
     /// Returns a `CIImage` with infinite extent only containing the given value in RGB and alpha 1.
+    /// So `CIImage.containing(42.3)` would result in an image containing the value (42.3, 42.3, 42.3, 1.0) in each pixel.
     static func containing(value: Double) -> CIImage? {
         return CIImage.containing(values: CIVector(x: CGFloat(value), y: CGFloat(value), z: CGFloat(value), w: 1.0))
     }

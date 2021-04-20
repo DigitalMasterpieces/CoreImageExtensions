@@ -91,7 +91,7 @@ extension CIContext {
 
     private func readPixelValues<PixelType>(from image: CIImage, in rect: CGRect, format: CIFormat, colorSpace: CGColorSpace?, defaultValue: PixelType) -> [PixelType] {
         assert(!rect.isInfinite, "Rect must not be infinite")
-        assert(image.extent.contains(rect), "The give rect must intersect with the image's extent")
+        assert(image.extent.contains(rect), "The given rect must intersect with the image's extent")
         // ⚠️ We only support reading 4-channel pixels right now due to alignment requirements of CIContext's `render` API.
         assert([.RGBA8, .RGBAh, .RGBAf].contains(format), "Only 4-channel formats are supported right now")
 
