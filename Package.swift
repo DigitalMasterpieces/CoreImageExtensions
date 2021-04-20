@@ -18,6 +18,9 @@ let package = Package(
         .testTarget(
             name: "CoreImageExtensionsTests",
             dependencies: ["CoreImageExtensions"],
-            path: "Tests"),
+            path: "Tests",
+            resources: [
+              .process("Resources")
+            ]),
     ]
 )
