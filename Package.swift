@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "CoreImageExtensions",
+    platforms: [.iOS(.v9), .macOS(.v10_15), .tvOS(.v9)],
     products: [
         .library(
             name: "CoreImageExtensions",
@@ -14,5 +15,9 @@ let package = Package(
             name: "CoreImageExtensions",
             dependencies: [],
             path: "Sources"),
+        .testTarget(
+            name: "CoreImageExtensionsTests",
+            dependencies: ["CoreImageExtensions"],
+            path: "Tests"),
     ]
 )
