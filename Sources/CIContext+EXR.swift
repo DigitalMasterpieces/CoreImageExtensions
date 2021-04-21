@@ -11,15 +11,15 @@ public extension CIContext {
     }
 
 
-    /// Renders the image and exports the resulting image data in EXR format.
+    /// Renders the image and returns the resulting image data in EXR format.
     ///
     /// To render an image for export, the image’s contents must not be empty and its extent dimensions must be finite.
     /// To export after applying a filter whose output has infinite extent, see the clampedToExtent() method.
     ///
-    /// ⚠️ Note: Due to a bug in Apple's EXR encoder (FB9080694), the image height must be at least 16 pixels!
-    ///          It will cause a BAD_ACCESS otherwise.
-    ///
     /// No options keys are supported at this time.
+    ///
+    /// - Note: ⚠️ Due to a bug in Apple's EXR encoder (FB9080694), the image height must be at least 16 pixels!
+    ///            It will cause a BAD_ACCESS otherwise.
     ///
     /// - Parameters:
     ///   - image: The image to render.
@@ -48,10 +48,10 @@ public extension CIContext {
     /// To render an image for export, the image’s contents must not be empty and its extent dimensions must be finite.
     /// To export after applying a filter whose output has infinite extent, see the clampedToExtent() method.
     ///
-    /// ⚠️ Note: Due to a bug in Apple's EXR encoder (FB9080694), the image height must be at least 16 pixels!
-    ///          It will cause a BAD_ACCESS otherwise.
-    ///
     /// No options keys are supported at this time.
+    ///
+    /// - Note: ⚠️ Due to a bug in Apple's EXR encoder (FB9080694), the image height must be at least 16 pixels!
+    ///            It will cause a BAD_ACCESS otherwise.
     ///
     /// - Parameters:
     ///   - image: The image to render.
