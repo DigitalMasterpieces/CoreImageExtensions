@@ -3,6 +3,8 @@ import CoreImageExtensions
 import XCTest
 
 
+#if os(iOS) || os(tvOS)
+
 @available(iOS 14, tvOS 14, *)
 @available(macOS, unavailable)
 @available(macCatalyst, unavailable)
@@ -31,3 +33,5 @@ class Float16ValueAccessTests: XCTestCase {
     }
 
 }
+
+#endif
