@@ -8,6 +8,9 @@ public extension CIContext {
     /// To render an image for export, the image’s contents must not be empty and its extent dimensions must be finite.
     /// To export after applying a filter whose output has infinite extent, see the clampedToExtent() method.
     ///
+    /// ⚠️ Note: Due to a bug in Apple's EXR encoder (FB9080694), the image height must be at least 16 pixels!
+    ///          It will cause a BAD_ACCESS otherwise.
+    ///
     /// No options keys are supported at this time.
     ///
     /// - Parameters:
@@ -19,6 +22,10 @@ public extension CIContext {
     ///   - options: No options keys are supported at this time.
     /// - Returns: A data representation of the rendered image in EXR format, or nil if the image could not be rendered.
     func exrRepresentation(of image: CIImage, format: CIFormat, colorSpace: CGColorSpace?, options: [CIImageRepresentationOption: Any] = [:]) -> Data? {
+        guard image.extent.height >= 16 else {
+            assertionFailure("The image's height must be at least 16 due to a bug in Apple's EXR encoder implementation")
+            return nil
+        }
         guard !image.extent.isInfinite else {
             assertionFailure("The image's extent must be finite")
             return nil
@@ -29,7 +36,10 @@ public extension CIContext {
         }
 
         let data = NSMutableData()
-        let destination = CGImageDestinationCreateWithData(data, "com.ilm.openexr-image" as CFString, 1, nil)!
+        guard let destination = CGImageDestinationCreateWithData(data, "com.ilm.openexr-image" as CFString, 1, nil) else {
+            assertionFailure("Failed to create an EXR image destination")
+            return nil
+        }
         CGImageDestinationAddImage(destination, cgImage, image.properties as CFDictionary)
         CGImageDestinationFinalize(destination)
 
