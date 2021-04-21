@@ -52,4 +52,29 @@ class EXRTests: XCTestCase {
         }
     }
 
+    func testEXRFileWriting() {
+        let testImage = CIImage.containing(values: CIVector(x: -4.0, y: 2.0, z: 0.0, w: 1.0))!.cropped(to: CGRect(x: 0, y: 0, width: 16, height: 44))
+
+        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("test.exr")
+        defer { try? FileManager.default.removeItem(at: tempURL) }
+
+        do {
+            // Note: we need to render in a linear color space, otherwise gamma correction will be applied to the values
+            try self.context.writeEXRRepresentation(of: testImage, to: tempURL, format: .RGBAh, colorSpace: CGColorSpace(name: CGColorSpace.linearSRGB))
+
+            guard let loadedImage = CIImage(contentsOf: tempURL) else {
+                XCTFail("Failed to read EXR data back into image")
+                return
+            }
+
+            let value = self.context.readFloat32PixelValue(from: loadedImage, at: .zero)
+            XCTAssertEqual(value.r, -4.0, accuracy: 0.001)
+            XCTAssertEqual(value.g,  2.0, accuracy: 0.001)
+            XCTAssertEqual(value.b,  0.0, accuracy: 0.001)
+            XCTAssertEqual(value.a,  1.0, accuracy: 0.001)
+        } catch {
+            XCTFail("Failed to create EXR data from image with error: \(error)")
+        }
+    }
+
 }
