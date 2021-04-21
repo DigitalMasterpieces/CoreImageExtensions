@@ -26,11 +26,11 @@ public extension CIContext {
     ///   - format: The pixel format for the output image.
     ///   - colorSpace: The color space in which to render the output image. This color space must conform
     ///                 to either the `CGColorSpaceModel.rgb` or `CGColorSpaceModel.monochrome` model and must be compatible
-    ///                 with the specified pixel format.
+    ///                 with the specified pixel format. If `nil`, the context's `outputColorSpace` will be used.
     ///   - options: No options keys are supported at this time.
     /// - Returns: A data representation of the rendered image in EXR format.
     /// - Throws: A `CIContext.ExportError` if the image data could not be created.
-    func exrRepresentation(of image: CIImage, format: CIFormat, colorSpace: CGColorSpace?, options: [CIImageRepresentationOption: Any] = [:]) throws -> Data {
+    func exrRepresentation(of image: CIImage, format: CIFormat, colorSpace: CGColorSpace? = nil, options: [CIImageRepresentationOption: Any] = [:]) throws -> Data {
         let cgImage = try self.createCGImageForEXRExport(of: image, format: format, colorSpace: colorSpace)
 
         let data = NSMutableData()
@@ -59,10 +59,10 @@ public extension CIContext {
     ///   - format: The pixel format for the output image.
     ///   - colorSpace: The color space in which to render the output image. This color space must conform
     ///                 to either the `CGColorSpaceModel.rgb` or `CGColorSpaceModel.monochrome` model and must be compatible
-    ///                 with the specified pixel format.
+    ///                 with the specified pixel format. If `nil`, the context's `outputColorSpace` will be used.
     ///   - options: No options keys are supported at this time.
     /// - Throws: A `CIContext.ExportError` if the image could not be written to the file.
-    func writeEXRRepresentation(of image: CIImage, to url: URL, format: CIFormat, colorSpace: CGColorSpace, options: [CIImageRepresentationOption: Any] = [:]) throws {
+    func writeEXRRepresentation(of image: CIImage, to url: URL, format: CIFormat, colorSpace: CGColorSpace? = nil, options: [CIImageRepresentationOption: Any] = [:]) throws {
         let cgImage = try self.createCGImageForEXRExport(of: image, format: format, colorSpace: colorSpace)
 
         guard let destination = CGImageDestinationCreateWithURL(url as CFURL, "com.ilm.openexr-image" as CFString, 1, nil) else {

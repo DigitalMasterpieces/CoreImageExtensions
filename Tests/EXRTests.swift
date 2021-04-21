@@ -11,7 +11,8 @@ class EXRTests: XCTestCase {
         let testImage = CIImage.containing(values: CIVector(x: -2.0, y: 0.0, z: 3.0, w: 1.0))!.cropped(to: CGRect(x: 0, y: 0, width: 32, height: 16))
 
         do {
-            let exrData = try self.context.exrRepresentation(of: testImage, format: .RGBAh, colorSpace: context.workingColorSpace ?? CGColorSpaceCreateDeviceRGB())
+            // Note: we need to render in a linear color space, otherwise gamma correction will be applied to the values
+            let exrData = try self.context.exrRepresentation(of: testImage, format: .RGBAh, colorSpace: CGColorSpace(name: CGColorSpace.linearSRGB))
 
             guard let loadedImage = CIImage(data: exrData) else {
                 XCTFail("Failed to read EXR data back into image")
@@ -37,7 +38,8 @@ class EXRTests: XCTestCase {
 
         do {
             // try to render the image back into data and load again
-            let exrData = try self.context.exrRepresentation(of: testEXRImage, format: .RGBAh, colorSpace: context.workingColorSpace ?? CGColorSpaceCreateDeviceRGB())
+            // Note: we need to render in a linear color space, otherwise gamma correction will be applied to the values
+            let exrData = try self.context.exrRepresentation(of: testEXRImage, format: .RGBAh, colorSpace: CGColorSpace(name: CGColorSpace.linearSRGB))
             guard let loadedImage = CIImage(data: exrData) else {
                 XCTFail("Failed to read EXR data back into image")
                 return
