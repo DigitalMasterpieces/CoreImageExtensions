@@ -74,7 +74,7 @@ public extension CIContext {
 
     private func createCGImageForEXRExport(of image: CIImage, format: CIFormat, colorSpace: CGColorSpace?) throws -> CGImage {
         guard image.extent.height >= 16 else {
-            throw ExportError.unsupportedExtent(message: "The image's height must be at least 16 due to a bug in Apple's EXR encoder implementation")
+            throw ExportError.unsupportedExtent(message: "The image's height must be at least 16 pixels due to a bug in Apple's EXR encoder implementation")
         }
         guard !image.extent.isInfinite else {
             throw ExportError.unsupportedExtent(message: "The image's extent must be finite")
