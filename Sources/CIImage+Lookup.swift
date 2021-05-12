@@ -30,7 +30,7 @@ public extension CIImage {
     }
     #endif
 
-    #if canImport(AppKit)
+    #if canImport(AppKit) && !targetEnvironment(macCatalyst)
     /// Convenience initializer for loading an image by its name from the given bundle.
     /// This will try to load the image from an asset catalog first and will search the bundle
     /// directly otherwise.
