@@ -55,7 +55,7 @@ extension CIContext {
     }
 
 
-    #if os(iOS) || os(tvOS)
+    #if (os(iOS) || os(tvOS)) && !targetEnvironment(macCatalyst)
     // MARK: - Float16
 
     /// Reads the RGBA-channel pixel values in Float16 format from the given `image` in the given `rect` and returns them as an array.

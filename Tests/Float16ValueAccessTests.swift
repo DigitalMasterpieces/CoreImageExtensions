@@ -3,7 +3,7 @@ import CoreImageExtensions
 import XCTest
 
 
-#if os(iOS) || os(tvOS)
+#if (os(iOS) || os(tvOS)) && !targetEnvironment(macCatalyst)
 
 @available(iOS 14, tvOS 14, *)
 @available(macOS, unavailable)
