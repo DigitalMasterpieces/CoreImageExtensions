@@ -9,6 +9,10 @@ let package = Package(
         .library(
             name: "CoreImageExtensions",
             targets: ["CoreImageExtensions"]),
+        .library(
+            name: "CoreImageExtensions-dynamic",
+            type: .dynamic,
+            targets: ["CoreImageExtensions"]),
     ],
     targets: [
         .target(
