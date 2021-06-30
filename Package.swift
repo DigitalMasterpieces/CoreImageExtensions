@@ -8,6 +8,9 @@ let package = Package(
     products: [
         .library(
             name: "CoreImageExtensions",
+            targets: ["CoreImageExtensions"]),
+        .library(
+            name: "CoreImageExtensions-dynamic",
             type: .dynamic,
             targets: ["CoreImageExtensions"]),
     ],
