@@ -158,6 +158,27 @@ public extension CIContext {
             return try self.context.startTask(toClear: destination)
         }
 
+        /// Analogue to ``startTask(toRender:from:to:at:)``, but this one will wait for the task to finish execution and return the resulting `CIRenderInfo` object.
+        @discardableResult
+        public func render(_ image: CIImage, from fromRect: CGRect, to destination: CIRenderDestination, at atPoint: CGPoint) throws -> CIRenderInfo {
+            let task = try self.startTask(toRender: image, from: fromRect, to: destination, at: atPoint)
+            return try task.waitUntilCompleted()
+        }
+
+        /// Analogue to ``startTask(toRender:to:)``, but this one will wait for the task to finish execution and return the resulting `CIRenderInfo` object.
+        @discardableResult
+        public func render(_ image: CIImage, to destination: CIRenderDestination) async throws -> CIRenderInfo {
+            let task = try self.startTask(toRender: image, to: destination)
+            return try task.waitUntilCompleted()
+        }
+
+        /// Analogue to ``startTask(toClear:)``, but this one will wait for the task to finish execution and return the resulting `CIRenderInfo` object.
+        @discardableResult
+        public func clear(_ destination: CIRenderDestination) throws -> CIRenderInfo {
+            let task = try self.startTask(toClear: destination)
+            return try task.waitUntilCompleted()
+        }
+
     }
 
     /// Returns the ``Actor`` instance associated with this context.

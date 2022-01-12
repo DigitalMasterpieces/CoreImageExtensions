@@ -13,7 +13,14 @@ let cgImage = await context.async.createCGImage(ciImage, from: ciImage.extent)
 > **_Note:_**
 > Though they are already asynchronous, even the APIs for working with `CIRenderDestination`, like `startTask(toRender:to:)`, will profit from using the `async` versions.
 > This is because Core Image will perform an analysis of the filter graph that should be applied to the given image _before_ handing the rendering work to the GPU. 
-> Especially for more complex filter pipelines this analysis can be quite costly and is better performed in a background queue to not block the main thread.  
+> Especially for more complex filter pipelines this analysis can be quite costly and is better performed in a background queue to not block the main thread.
+
+We also added async alternatives for the `CIRenderDestination`-related APIs that wait for the task execution and return the `CIRenderInfo` object:
+```swift
+let info = try await context.async.render(image, from: rect, to: destination, at: point)
+let info = try await context.async.render(image, to: destination)
+let info = try await context.async.clear(destination)
+```
 
 ## Image Lookup
 We added a convenience initializer to `CIImage` that you can use to load an image by its name from an asset catalog or from a bundle directly:
