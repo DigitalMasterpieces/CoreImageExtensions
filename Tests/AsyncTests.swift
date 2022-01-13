@@ -10,7 +10,7 @@ class AsyncTests: XCTestCase {
 
     let testPixelImage = CIImage.containing(values: CIVector(x: 0.0, y: 0.5, z: 1.0, w: 1.0))!.cropped(to: .singlePixel)
 
-    func testForMemoryLeak() {
+    func testContextRelease() {
         var context: CIContext? = CIContext()
         // create actor
         let _ = context?.async
