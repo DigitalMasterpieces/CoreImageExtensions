@@ -73,6 +73,9 @@ let green: Float32 = value.g // for instance
 These methods come in variants for accessing an area of pixels (in a given `CGRect`) or single pixels (at a given `CGPoint`).
 They are also available for three different data types: `UInt8` (the normal 8-bit per channel format, with [0…255] range), `Float32` (aka `float` containing arbitrary values, but colors are usually mapped to [0...1]), and `Float16` (only on iOS).
 
+> **_Note:_**
+> Also available as `async` versions.
+
 ## OpenEXR Support
 [OpenEXR](https://en.wikipedia.org/wiki/OpenEXR) is an open standard for storing arbitrary bitmap data that exceed “normal” image color data, like 32-bit high-dynamic range data or negative floating point values (for instance for height fields).
 
@@ -87,6 +90,9 @@ try context.writeEXRRepresentation(of: image, to: url, format: .RGBAf)
 ```
 
 For reading EXR files into a `CIImage`, the usual initializers like `CIImage(contentsOf: url)` or `CIImage(named: “myImage.exr”` (see above) can be used.
+
+> **_Note:_**
+> Also available as `async` versions.
 
 ### OpenEXR Test Images
 All EXR test images used in this project have been taken from [here](https://github.com/AcademySoftwareFoundation/openexr-images/).

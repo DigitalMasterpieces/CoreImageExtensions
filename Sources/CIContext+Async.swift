@@ -12,7 +12,7 @@ public extension CIContext {
     actor Actor {
 
         /// The "wrapped" context instance.
-        private weak var context: CIContext!
+        public private(set) weak var context: CIContext!
 
 
         // MARK: - Lifecycle
