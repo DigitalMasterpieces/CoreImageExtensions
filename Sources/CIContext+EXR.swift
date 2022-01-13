@@ -86,3 +86,19 @@ public extension CIContext {
     }
 
 }
+
+
+@available(iOS 13.0, macOS 10.15, macCatalyst 13.0, tvOS 13.0, *)
+public extension CIContext.Actor {
+
+    /// Async version of the `CIContext` method with the same signature.
+    func exrRepresentation(of image: CIImage, format: CIFormat, colorSpace: CGColorSpace? = nil, options: [CIImageRepresentationOption: Any] = [:]) throws -> Data {
+        return try self.context.exrRepresentation(of: image, format: format, colorSpace: colorSpace, options: options)
+    }
+
+    /// Async version of the `CIContext` method with the same signature.
+    func writeEXRRepresentation(of image: CIImage, to url: URL, format: CIFormat, colorSpace: CGColorSpace? = nil, options: [CIImageRepresentationOption: Any] = [:]) throws {
+        return try self.context.writeEXRRepresentation(of: image, to: url, format: format, colorSpace: colorSpace, options: options)
+    }
+
+}

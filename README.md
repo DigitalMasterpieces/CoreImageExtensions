@@ -2,6 +2,26 @@
 
 Useful extensions for Apple's Core Image framework.
 
+## Async Rendering
+Almost all rendering APIs of `CIContext` are synchronous, i.e., they will block the current thread until rendering is done. In many cases, especially when calling from the main thread, this is undesirable.
+
+We added an extension to `CIContext` that adds `async` versions of all rendering APIs via a wrapping `actor` instance. The actor can be accessed via the `async` property:
+```swift
+let cgImage = await context.async.createCGImage(ciImage, from: ciImage.extent)
+```
+
+> **_Note:_**
+> Though they are already asynchronous, even the APIs for working with `CIRenderDestination`, like `startTask(toRender:to:)`, will profit from using the `async` versions.
+> This is because Core Image will perform an analysis of the filter graph that should be applied to the given image _before_ handing the rendering work to the GPU. 
+> Especially for more complex filter pipelines this analysis can be quite costly and is better performed in a background queue to not block the main thread.
+
+We also added async alternatives for the `CIRenderDestination`-related APIs that wait for the task execution and return the `CIRenderInfo` object:
+```swift
+let info = try await context.async.render(image, from: rect, to: destination, at: point)
+let info = try await context.async.render(image, to: destination)
+let info = try await context.async.clear(destination)
+```
+
 ## Image Lookup
 We added a convenience initializer to `CIImage` that you can use to load an image by its name from an asset catalog or from a bundle directly:
 ```swift
@@ -53,6 +73,9 @@ let green: Float32 = value.g // for instance
 These methods come in variants for accessing an area of pixels (in a given `CGRect`) or single pixels (at a given `CGPoint`).
 They are also available for three different data types: `UInt8` (the normal 8-bit per channel format, with [0…255] range), `Float32` (aka `float` containing arbitrary values, but colors are usually mapped to [0...1]), and `Float16` (only on iOS).
 
+> **_Note:_**
+> Also available as `async` versions.
+
 ## OpenEXR Support
 [OpenEXR](https://en.wikipedia.org/wiki/OpenEXR) is an open standard for storing arbitrary bitmap data that exceed “normal” image color data, like 32-bit high-dynamic range data or negative floating point values (for instance for height fields).
 
@@ -67,6 +90,9 @@ try context.writeEXRRepresentation(of: image, to: url, format: .RGBAf)
 ```
 
 For reading EXR files into a `CIImage`, the usual initializers like `CIImage(contentsOf: url)` or `CIImage(named: “myImage.exr”` (see above) can be used.
+
+> **_Note:_**
+> Also available as `async` versions.
 
 ### OpenEXR Test Images
 All EXR test images used in this project have been taken from [here](https://github.com/AcademySoftwareFoundation/openexr-images/).

@@ -104,3 +104,49 @@ extension CIContext {
     }
 
 }
+
+
+@available(iOS 13.0, macOS 10.15, macCatalyst 13.0, tvOS 13.0, *)
+extension CIContext.Actor {
+
+    /// Async version of the `CIContext` method with the same signature.
+    public func readUInt8PixelValues(from image: CIImage, in rect: CGRect, colorSpace: CGColorSpace? = nil) -> [Pixel<UInt8>] {
+        return self.context.readUInt8PixelValues(from: image, in: rect, colorSpace: colorSpace)
+    }
+
+    /// Async version of the `CIContext` method with the same signature.
+    public func readUInt8PixelValue(from image: CIImage, at point: CGPoint, colorSpace: CGColorSpace? = nil) -> Pixel<UInt8> {
+        return self.context.readUInt8PixelValue(from: image, at: point, colorSpace: colorSpace)
+    }
+
+    /// Async version of the `CIContext` method with the same signature.
+    public func readFloat32PixelValues(from image: CIImage, in rect: CGRect, colorSpace: CGColorSpace? = nil) -> [Pixel<Float32>] {
+        return self.context.readFloat32PixelValues(from: image, in: rect, colorSpace: colorSpace)
+    }
+
+    /// Async version of the `CIContext` method with the same signature.
+    public func readFloat32PixelValue(from image: CIImage, at point: CGPoint, colorSpace: CGColorSpace? = nil) -> Pixel<Float32> {
+        return self.context.readFloat32PixelValue(from: image, at: point, colorSpace: colorSpace)
+    }
+
+    #if (os(iOS) || os(tvOS)) && !targetEnvironment(macCatalyst)
+
+    /// Async version of the `CIContext` method with the same signature.
+    @available(iOS 14, tvOS 14, *)
+    @available(macOS, unavailable)
+    @available(macCatalyst, unavailable)
+    public func readFloat16PixelValues(from image: CIImage, in rect: CGRect, colorSpace: CGColorSpace? = nil) -> [Pixel<Float16>] {
+        return self.context.readFloat16PixelValues(from: image, in: rect, colorSpace: colorSpace)
+    }
+
+    /// Async version of the `CIContext` method with the same signature.
+    @available(iOS 14, tvOS 14, *)
+    @available(macOS, unavailable)
+    @available(macCatalyst, unavailable)
+    public func readFloat16PixelValue(from image: CIImage, at point: CGPoint, colorSpace: CGColorSpace? = nil) -> Pixel<Float16> {
+        return self.context.readFloat16PixelValue(from: image, at: point, colorSpace: colorSpace)
+    }
+
+    #endif
+
+}
