@@ -100,9 +100,9 @@ extension CIImage {
     /// Each tile will display the color in one of the `swatchColorSpaces`.
     private static func colorSwatch(for color: CIColor) -> CIImage {
         // Generate a color tile for each color space and place them next to each other.
-        let swatch = self.swatchColorSpaces.enumerated().reduce(CIImage.empty()) { partialResult, entry in
-            var tile = CIImage.colorTile(for: color, colorSpace: entry.element.colorSpace, size: self.tileSize, label: entry.element.label)
-            tile = tile.translatedBy(dx: CGFloat(entry.offset) * tile.extent.width, dy: 0)
+        let swatch = self.swatchColorSpaces.reduce(CIImage.empty()) { partialResult, entry in
+            var tile = CIImage.colorTile(for: color, colorSpace: entry.colorSpace, size: self.tileSize, label: entry.label)
+            tile = tile.translatedBy(dx: partialResult.extent.maxX.isInfinite ? 0 : partialResult.extent.maxX, dy: 0)
             return tile.composited(over: partialResult)
         }
         // Also apply some round corners to the whole swatch.
@@ -129,9 +129,9 @@ extension CIImage {
     /// and which part is EDR (extended dynamic range).
     private static func brightnessScale(levels: [Double]) -> CIImage {
         // Create a long swatch containing the different brightness tiles.
-        var scale = levels.enumerated().reduce(CIImage.empty()) { partialResult, entry in
-            var tile = CIImage.brightnessTile(for: entry.element, size: self.tileSize)
-            tile = tile.translatedBy(dx: CGFloat(entry.offset) * self.tileSize.width, dy: 0)
+        var scale = levels.reduce(CIImage.empty()) { partialResult, brightness in
+            var tile = CIImage.brightnessTile(for: brightness, size: self.tileSize)
+            tile = tile.translatedBy(dx: partialResult.extent.maxX.isInfinite ? 0 : partialResult.extent.maxX, dy: 0)
             return tile.composited(over: partialResult)
         }
         // Add some round corners.
