@@ -71,7 +71,7 @@ public extension CIImage {
 
         // Multiply with the image: where the background is white, the resulting color will be that of the image;
         // where the background is transparent (the corners), the result will be transparent.
-        return self.applyingFilter("CISourceAtopCompositing", parameters: [kCIInputBackgroundImageKey: roundedRect])
+        return self.applyingFilter("CIMultiplyCompositing", parameters: [kCIInputBackgroundImageKey: roundedRect])
     }
 
 }
