@@ -55,7 +55,7 @@ public extension CIColor {
         let darkColor = CIColor.black
 
         let luminance = (self.red * 0.299) + (self.green * 0.587) + (self.blue * 0.114)
-        return (luminance > 0.5) ? darkColor : lightColor
+        return (luminance > 0.4) ? darkColor : lightColor
     }
 
 }
