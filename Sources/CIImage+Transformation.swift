@@ -47,4 +47,24 @@ public extension CIImage {
         return self.composited(over: background)
     }
 
+    /// Returns the same image with rounded corners. The clipped parts of the corner will be transparent.
+    /// - Parameter radius: The corner radius.
+    /// - Returns: The same image with rounded corners.
+    func withRoundedCorners(radius: Double) -> CIImage? {
+        // We can't apply rounded corners to infinite images.
+        guard !self.extent.isInfinite else { return self }
+
+        // Generate a white background image with the same extent and rounded corners.
+        let generator = CIFilter(name: "CIRoundedRectangleGenerator", parameters: [
+            kCIInputRadiusKey: radius,
+            kCIInputExtentKey: CIVector(cgRect: self.extent),
+            kCIInputColorKey: CIColor.white
+        ])
+        guard let roundedRect = generator?.outputImage else { return nil }
+
+        // Multiply with the image: where the background is white, the resulting color will be that of the image;
+        // where the background is transparent (the corners), the result will be transparent.
+        return self.applyingFilter("CISourceAtopCompositing", parameters: [kCIInputBackgroundImageKey: roundedRect])
+    }
+
 }
