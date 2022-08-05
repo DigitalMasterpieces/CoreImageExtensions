@@ -36,6 +36,13 @@ public extension CIImage {
         return self.translatedBy(dx: origin.x - self.extent.origin.x, dy: origin.y - self.extent.origin.y)
     }
 
+    /// Returns a new image that represents the original image after moving the center of its extent to the given point.
+    /// - Parameter point: The new center point of the image.
+    /// - Returns: A moved image with the new center point.
+    func centered(in point: CGPoint) -> CIImage {
+        return self.translatedBy(dx: point.x - self.extent.midX, dy: point.y - self.extent.midY)
+    }
+
     /// Returns a new image that represents the original image after adding a padding of clear pixels around it,
     /// effectively increasing its virtual extent.
     /// - Parameters:
