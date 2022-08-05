@@ -28,9 +28,14 @@ extension CIImage {
     ///
     /// - Returns: An EDR brightness and wide gamut color test pattern image.
     public static func testPattern() -> CIImage {
+        // Note: Since Core Image's coordinate system has its origin in the lower left corner, we composite the pattern from the bottom up.
+
+        // Start with an empty image and composite the pattern components on top.
         var pattern = CIImage.empty()
 
+        // Add wide gamut color swatches in a grid in the lower part of the pattern.
         for (column, rowColors) in self.swatchColors.enumerated() {
+            // Note: We reverse here so the first color specified in the array is displayed on the top.
             for (row, color) in rowColors.reversed().enumerated() {
                 var swatch = CIImage.colorSwatch(for: color)
                 swatch = swatch.moved(to: CGPoint(x: CGFloat(column) * (swatch.extent.width + self.margin), y: CGFloat(row) * (swatch.extent.height + self.margin)))
@@ -38,10 +43,17 @@ extension CIImage {
             }
         }
 
+        // Add the brightness scale above the color swatches.
         var brightnessScale = CIImage.brightnessScale(levels: self.brightnessScaleLevels)
         brightnessScale = brightnessScale.moved(to: CGPoint(x: 0, y: pattern.extent.maxY + self.margin))
         pattern = brightnessScale.composited(over: pattern)
 
+        // Add a nice title to the pattern.
+        var title = self.titleLabel()
+        title = title.moved(to: CGPoint(x: 0, y: pattern.extent.maxY + self.margin))
+        pattern = title.composited(over: pattern)
+
+        // Put everything on a black background.
         let background = CIImage(color: .black).cropped(to: pattern.extent.insetBy(dx: -self.margin, dy: -self.margin))
         return pattern.composited(over: background).moved(to: .zero)
     }
@@ -161,6 +173,57 @@ extension CIImage {
         scale = hdrLabel.composited(over: scale)
 
         return scale
+    }
+
+    /// Creates a title label for the pattern that reads "EDR & Wide Gamut Test Pattern" with some fancy gradients.
+    private static func titleLabel() -> CIImage {
+        // Create a title label image. The 97 point font size will let the label have roughly the same width as the brightness scale.
+        var label = CIImage.text("EDR & Wide Gamut Test Pattern", fontName: self.labelFont, fontSize: 97, color: .white)!
+
+        // Add a gradient from bright EDR white to normal white over the "EDR" part of the label.
+        let edrLabelRect = CGRect(x: 0, y: 0, width: 169, height: 116)
+        let edrGradient = CIFilter(name: "CISmoothLinearGradient", parameters: [
+            "inputPoint0": CIVector(x: edrLabelRect.minX, y: edrLabelRect.midY),
+            "inputPoint1": CIVector(x: edrLabelRect.maxX, y: edrLabelRect.midY),
+            "inputColor0": CIColor(extendedWhite: 3.2)!,
+            "inputColor1": CIColor(white: 1.0)!
+        ])!.outputImage!.cropped(to: edrLabelRect)
+        label = edrGradient.composited(over: label, using: .sourceAtop)!
+
+        // Add a "rainbow" color gradient over the "Wide Gamut" part of the Label.
+        let wideGamutRect = CGRect(x: 248, y: 0, width: 523, height: 116)
+        let wideGamutGradient = self.hueGradient(from: wideGamutRect.minX, to: wideGamutRect.maxX)
+            .cropped(to: wideGamutRect)
+            .matchedToWorkingSpace(from: .extendedLinearITUR2020ColorSpace!)!
+        label = wideGamutGradient.composited(over: label, using: .sourceAtop)!
+
+        return label
+    }
+
+    /// Generates an image containing a horizontal "rainbow" gradient containing all color hues.
+    /// The hues are mapped to the x-axis between `startX` and `endX`.
+    ///
+    /// - Warning: ⚠️ This uses a simple color kernel written in the very much deprecated
+    ///               Core Image Kernel Language that is compiled at runtime.
+    ///               This is mainly for convenience reasons, but also because custom
+    ///               Metal kernels can't be compiled in a Swift package yet.
+    ///               If you want to use something similar in production, you should implement
+    ///               it using a Metal kernel that is compiled (and validated) together with the
+    ///               rest of the code.
+    private static func hueGradient(from startX: CGFloat, to endX: CGFloat) -> CIImage {
+        let kernelCode = """
+            kernel vec4 hueGradient(float startX, float endX) {
+                // Map the x-axis between the points to the hue value in HSV color space.
+                float hue = (destCoord().x - startX) / (endX - startX);
+                vec3 hsv = vec3(clamp(hue, 0.0, 1.0), 1.0, 1.0);
+                // Convert HSV back to RGB (taken from https://stackoverflow.com/a/17897228/541016).
+                vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+                vec3 p = abs(fract(hsv.xxx + K.xyz) * 6.0 - K.www);
+                return vec4(hsv.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), hsv.y), 1.0);
+            }
+        """
+        let kernel = CIColorKernel(source: kernelCode)!
+        return kernel.apply(extent: .infinite, arguments: [startX, endX])!
     }
 
 }
