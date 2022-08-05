@@ -16,6 +16,7 @@ extension CIImage {
     ///   - background: An image to serve as the background of the compositing operation.
     ///   - blendKernel: The `CIBlendKernel` to use for blending the image with the `background`.
     /// - Returns: An image object representing the result of the compositing operation.
+    @available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
     public func composited(over background: CIImage, using blendKernel: CIBlendKernel) -> CIImage? {
         return blendKernel.apply(foreground: self, background: background)
     }
@@ -43,7 +44,11 @@ extension CIImage {
     /// - Parameter color: The color to override visible pixels of the receiver with.
     /// - Returns: The colorized image.
     public func colorized(with color: CIColor) -> CIImage? {
-        return CIBlendKernel.sourceAtop.apply(foreground: CIImage(color: color).cropped(to: self.extent), background: self)
+        if #available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *) {
+            return CIBlendKernel.sourceAtop.apply(foreground: CIImage(color: color).cropped(to: self.extent), background: self)
+        } else {
+            return CIImage(color: color).cropped(to: self.extent).applyingFilter("CISourceAtopCompositing", parameters: [kCIInputBackgroundImageKey: self])
+        }
     }
 
 }
