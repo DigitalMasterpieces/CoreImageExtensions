@@ -98,15 +98,30 @@ extension CIImage {
 
     /// Creates a swatch (line of colored tiles) for the given `color` for comparison.
     /// Each tile will display the color in one of the `swatchColorSpaces`.
+    /// A label is added to the left next to the swatch displaying the color values.
     private static func colorSwatch(for color: CIColor) -> CIImage {
+        // Generate a label to put next to the swatch.
+        let labelText = String(format: """
+            R: %.2f
+            G: %.2f
+            B: %.2f
+            """, color.red, color.green, color.blue)
+        var label = CIImage.text(labelText, fontName: ".AppleSystemUIFontMonospaced-Semibold", fontSize: self.tileSize.height / 7.0, color: .white, padding: 18)!
+
         // Generate a color tile for each color space and place them next to each other.
-        let swatch = self.swatchColorSpaces.reduce(CIImage.empty()) { partialResult, entry in
+        var swatch = self.swatchColorSpaces.reduce(CIImage.empty()) { partialResult, entry in
             var tile = CIImage.colorTile(for: color, colorSpace: entry.colorSpace, size: self.tileSize, label: entry.label)
             tile = tile.translatedBy(dx: partialResult.extent.maxX.isInfinite ? 0 : partialResult.extent.maxX, dy: 0)
             return tile.composited(over: partialResult)
         }
         // Also apply some round corners to the whole swatch.
-        return swatch.withRoundedCorners(radius: self.tileCornerRadius)!
+        swatch = swatch.withRoundedCorners(radius: self.tileCornerRadius)!
+
+        // Adjust placement of label and swatch.
+        label = label.centered(in: CGPoint(x: label.extent.midX, y: swatch.extent.midY))
+        swatch = swatch.moved(to: CGPoint(x: label.extent.maxX, y: 0))
+
+        return label.composited(over: swatch)
     }
 
     /// Creates a single tile (rectangle) filled with white (or gray) in the given `brightness` value with the given `size`.
