@@ -44,7 +44,10 @@ extension CIImage {
     ///   - color: The color of the text. The background of the text will be transparent.
     ///   - padding: A padding to add around the text, effectively increasing the text's virtual `extent`.
     /// - Returns: An image containing the rendered text.
-    @available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
+    @available(macOS 10.13, *)
+    @available(iOS, unavailable)
+    @available(macCatalyst, unavailable)
+    @available(tvOS, unavailable)
     public static func text(_ text: String, font: NSFont, color: CIColor = .black, padding: CGFloat = 0.0) -> CIImage? {
         return self.text(text, fontName: font.fontName, fontSize: font.pointSize, color: color, padding: padding)
     }
