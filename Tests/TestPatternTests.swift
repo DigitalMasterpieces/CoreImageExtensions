@@ -7,6 +7,7 @@ import XCTest
 /// These tests can be used to generate EDR & wide gamut test pattern images in various formats.
 /// The generated images are attached to the test runs and can be found when opening the test result
 /// in the Reports navigator.
+@available(iOS 14.0, macOS 11.0, macCatalyst 14.0, tvOS 14.0, *)
 class TestPatternTests: XCTestCase {
 
     let context = CIContext()
@@ -105,7 +106,7 @@ class TestPatternTests: XCTestCase {
             self.attach(data, type: .heic, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
         }
 
-        if #available(macOS 12.0, *) {
+        if #available(iOS 15.0, macOS 12.0, macCatalyst 15.0, tvOS 15.0, *) {
             for colorSpace in highBitColorSpaces {
                 let testPatter = self.testPattern(for: .heic, bitDepth: 10, isFloat: false, colorSpace: colorSpace)
                 let data = self.context.pngRepresentation(of: testPatter, format: .RGBAh, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
@@ -117,6 +118,7 @@ class TestPatternTests: XCTestCase {
 }
 
 
+@available(iOS 14.0, macOS 11.0, macCatalyst 14.0, tvOS 14.0, *)
 private extension UTType {
     static var exr: Self { UTType("com.ilm.openexr-image")! }
 }
