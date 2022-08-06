@@ -26,8 +26,10 @@ extension CIImage {
     /// - Warning: ⚠️ For testing purposes only! This is not meant to be shipped in production code since generating
     ///               the pattern is slow and potentially error-prone (lots of force-unwraps in here for convenience).
     ///
+    /// - Parameter label: An optional label text that will be added at the bottom left corner of the pattern.
+    ///                    This can be used, for instance, for adding information about file format and color space of the rendering.
     /// - Returns: An EDR brightness and wide gamut color test pattern image.
-    public static func testPattern() -> CIImage {
+    public static func testPattern(label: String? = nil) -> CIImage {
         // Note: Since Core Image's coordinate system has its origin in the lower left corner, we composite the pattern from the bottom up.
 
         // Start with an empty image and composite the pattern components on top.
@@ -52,6 +54,13 @@ extension CIImage {
         var title = self.titleLabel()
         title = title.moved(to: CGPoint(x: 0, y: pattern.extent.maxY + self.margin))
         pattern = title.composited(over: pattern)
+
+        // Add the given text label at the bottom left corner of the image, if any.
+        if let labelText = label, !labelText.isEmpty {
+            var label = CIImage.text(labelText, fontName: self.labelFont, fontSize: 30, color: .white)!
+            label = label.moved(to: CGPoint(x: 0, y: -label.extent.height - self.margin))
+            pattern = label.composited(over: pattern)
+        }
 
         // Put everything on a black background.
         let background = CIImage(color: .black).cropped(to: pattern.extent.insetBy(dx: -self.margin, dy: -self.margin))
