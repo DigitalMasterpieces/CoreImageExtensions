@@ -227,15 +227,30 @@ extension CIImage {
     /// Generates an image containing a horizontal "rainbow" gradient containing all color hues.
     /// The hues are mapped to the x-axis between `startX` and `endX`.
     ///
-    /// - Warning: ⚠️ This uses a simple color kernel written in the very much deprecated
-    ///               Core Image Kernel Language that is compiled at runtime.
+    /// - Warning: ⚠️ This uses a simple color kernel written in Metal and a fallback version
+    ///               for older OSes, written in the very much deprecated
+    ///               Core Image Kernel Language that are compiled at runtime.
     ///               This is mainly for convenience reasons, but also because custom
-    ///               Metal kernels can't be compiled in a Swift package yet.
+    ///               Metal kernels can't be compiled at build-time in a Swift package yet.
     ///               If you want to use something similar in production, you should implement
     ///               it using a Metal kernel that is compiled (and validated) together with the
     ///               rest of the code.
     private static func hueGradient(from startX: CGFloat, to endX: CGFloat) -> CIImage {
-        let kernelCode = """
+        let metalKernelCode = """
+            #include <CoreImage/CoreImage.h>
+            using namespace metal;
+
+            [[ stitchable ]] half4 hueGradient(half startX, half endX, coreimage::destination dest) {
+                // Map the x-axis between the points to the hue value in HSV color space.
+                const half hue = (dest.coord().x - startX) / (endX - startX);
+                const half3 hsv = half3(clamp(hue, 0.0h, 1.0h), 1.0h, 1.0h);
+                // Convert HSV back to RGB (taken from https://stackoverflow.com/a/17897228/541016).
+                const half4 K = half4(1.0h, 2.0h / 3.0h, 1.0h / 3.0h, 3.0h);
+                const half3 p = abs(fract(hsv.xxx + K.xyz) * 6.0h - K.www);
+                return half4(hsv.z * mix(K.xxx, clamp(p - K.xxx, 0.0h, 1.0h), hsv.y), 1.0h);
+            }
+        """
+        let ciklKernelCode = """
             kernel vec4 hueGradient(float startX, float endX) {
                 // Map the x-axis between the points to the hue value in HSV color space.
                 float hue = (destCoord().x - startX) / (endX - startX);
@@ -246,7 +261,7 @@ extension CIImage {
                 return vec4(hsv.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), hsv.y), 1.0);
             }
         """
-        let kernel = CIColorKernel(source: kernelCode)!
+        let kernel = try! CIColorKernel.kernel(withMetalString: metalKernelCode, fallbackCIKLString: ciklKernelCode)
         return kernel.apply(extent: .infinite, arguments: [startX, endX])!
     }
 
