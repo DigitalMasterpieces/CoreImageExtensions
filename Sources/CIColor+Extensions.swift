@@ -54,8 +54,10 @@ public extension CIColor {
         let lightColor = CIColor.white
         let darkColor = CIColor.black
 
-        let luminance = (self.red * 0.299) + (self.green * 0.587) + (self.blue * 0.114)
-        return (luminance > 0.4) ? darkColor : lightColor
+        // Calculate luminance based on D65 white point (assuming linear color values).
+        let luminance = (self.red * 0.2126) + (self.green * 0.7152) + (self.blue * 0.0722)
+        // Compare against the perceptual luminance midpoint (0.5 after gamma correction).
+        return (luminance > 0.214) ? darkColor : lightColor
     }
 
 }
