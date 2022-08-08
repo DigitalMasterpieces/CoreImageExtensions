@@ -154,7 +154,7 @@ let labelColor = backgroundColor.contrastColor
 ```
 
 ## Color Space Convenience
-A `CGColorSpace` is usually initialized by its name like this `CGColorSpace(name: CGColorSpace.extendedLinearSRGB).
+A `CGColorSpace` is usually initialized by its name like this `CGColorSpace(name: CGColorSpace.extendedLinearSRGB)`.
 This this is rather long, we added some static accessors for the most common color spaces used when working with Core Image for convenience:
 ```swift
 CGColorSpace.sRGBColorSpace
@@ -218,19 +218,19 @@ let generalKernel = try CIKernel.kernel(withMetalString: metalKernelCode) // loa
 // Load the kernel with a specific function name.
 let otherGeneralKernel = try CIKernel.kernel(withMetalString: metalKernelCode, kernelName: "otherGeneral")
 // Load the first color kernel from the metal sources.
-let colorKernel = try CIColorKernel.kernel(withMetalString: metalKernelCode)
+let colorKernel = try CIColorKernel.kernel(withMetalString: metalKernelCode) // loads "color" kernel function
 // Load the first warp kernel from the metal sources.
-let colorKernel = try CIWarp.kernel(withMetalString: metalKernelCode)
+let colorKernel = try CIWarp.kernel(withMetalString: metalKernelCode) // loads "warp" kernel function
 ```
 
-> **⚠️ _Important:_**
-> There are a few limitations to this API:
-> - Run-time compilation of Metal kernels is only supported starting from iOS 15 and macOS 12.
-> - It only works when the Metal kernels are attributed as `[[ stitchable ]]`.
->   Please refer to [this WWDC talk](https://developer.apple.com/wwdc21/10159) for details.
-> - It only works when the Metal device used by Core Image supports dynamic libraries.
->   You can check `MTLDevice.supportsDynamicLibraries` to see if runtime compilation of Metal-based CIKernels is supported.
-> - `CIBlendKernel` can't be compiled this way, unfortunately. The `CIKernel.kernels(withMetalString:)` API just identifies them as `CIColorKernel`
+**⚠️ _Important:_**
+There are a few limitations to this API:
+- Run-time compilation of Metal kernels is only supported starting from iOS 15 and macOS 12.
+- It only works when the Metal kernels are attributed as `[[ stitchable ]]`.
+  Please refer to [this WWDC talk](https://developer.apple.com/wwdc21/10159) for details.
+- It only works when the Metal device used by Core Image supports dynamic libraries.
+  You can check `MTLDevice.supportsDynamicLibraries` to see if runtime compilation of Metal-based CIKernels is supported.
+- `CIBlendKernel` can't be compiled this way, unfortunately. The `CIKernel.kernels(withMetalString:)` API just identifies them as `CIColorKernel`
 
 If your minimum deployment target doesn't yet support runtime compilation of Metal kernels, you can use the following API instead.
 It allows to provide a backup kernel implementation in CIKL what is used on older system where Metal runtime compilation is not supported:
