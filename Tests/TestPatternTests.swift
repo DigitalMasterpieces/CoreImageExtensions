@@ -69,7 +69,7 @@ class TestPatternTests: XCTestCase {
         }
     }
 
-    /// Generates EDR & wide gamut test pattern images in TIFF file format.
+    /// Generates EDR & wide gamut test pattern images in PNG file format.
     /// PNG supports 8- and 16-bit color depths, so we generate patterns in the color spaces fitting those bit depths.
     /// However, PNG does not support floating-point values, so we don't need to generate an image in extended color space.
     func testPNGPatternGeneration() {
@@ -113,6 +113,22 @@ class TestPatternTests: XCTestCase {
                 self.attach(data, type: .heic, bitDepth: 10, isFloat: false, colorSpace: colorSpace)
             }
         }
+    }
+
+    /// Generates EDR & wide gamut test pattern images in PNG file format that is tone-mapped from BT.2100 PQ (HDR) to sRGB
+    /// to demonstrate what it might roughly like on EDR-capable screens (just much dimmer).
+    func testToneMappedPatternGeneration() {
+        let testPatter = CIImage.testPattern(label: "BT.2100 PQ (HDR) tone-mapped to sRGB")
+        // Create a pattern image that contains HDR data.
+        let hdrData = self.context.pngRepresentation(of: testPatter, format: .RGBAh, colorSpace: .itur2100PQColorSpace!)!
+        // Load that data again into a `CIImage` and let CI perform tone-mapping to SDR.
+        let toneMappedImage = CIImage(data: hdrData, options: [CIImageOption.toneMapHDRtoSDR: true])!
+        // Render the tone-mapped SDR image in sRGB and save as attachment.
+        let data = self.context.pngRepresentation(of: toneMappedImage, format: .RGBA8, colorSpace: .sRGBColorSpace!)!
+        let attachment = XCTAttachment(data: data, uniformTypeIdentifier: UTType.png.identifier)
+        attachment.lifetime = .keepAlways
+        attachment.name = "TestPattern_tone-mapped.png"
+        self.add(attachment)
     }
 
 }

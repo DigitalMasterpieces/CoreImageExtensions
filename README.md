@@ -267,10 +267,10 @@ To ensure that all parts of our apps can properly process and display EDR media,
 - displays a stripe of tiles with increasing pixel brightness value (up to the XDRs peak brightness of 1600 nits) 
 - and swatches of various colors in three common color gamuts (sRGB, Display P3, and BT.2020).
 
-![EDR & Wide Gamut Test Pattern](EDR_Wide_Gamut_Test_Patterns/TestPattern_16bit_BT.2100-PQ.png)]
+![EDR & Wide Gamut Test Pattern](EDR_Wide_Gamut_Test_Patterns/TestPattern_tone-mapped.png)
 
 > **_Note:_**
-> Your browser and operating system will likely tone-map the image above to the maximum range of your screen, which is actually a feature and not a bug.
+> The image above is tone-mapped from HDR to SDR to demonstrate what it will roughly look like on a HDR-capable screen (just much dimmer).
 > If you want to see the colors in their correct form (and see where you screen has to clip colors), check out the extended range [EXR](EDR_Wide_Gamut_Test_Patterns/TestPattern_16bit_float_extended-linear-sRGB.exr?raw=true) or [TIFF](EDR_Wide_Gamut_Test_Patterns/TestPattern_16bit_float_extended-linear-sRGB.tiff?raw=true) version of the image.
 > The tone-mapped PNG version above was chosen so you can better see the intent of the pattern.
 
