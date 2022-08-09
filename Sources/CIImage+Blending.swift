@@ -8,9 +8,9 @@ extension CIImage {
     /// using the given blend kernel.
     ///
     /// The `extent` of the result image will be determined by `extent` of the receiver,
-    /// the `extent` of the `background` images and the `blendKernel` used. For most of the
-    /// builtin blend kernels (as well as custom blend kernels) the result image
-    /// `extent` will be the union of the receiver and background image extents.
+    /// the `extent` of the `background` images, and the `blendKernel` used. For most of the
+    /// built-in blend kernels (as well as custom blend kernels) the result image's
+    /// `extent` will be the union of the receiver's and background image's extents.
     ///
     /// - Parameters:
     ///   - background: An image to serve as the background of the compositing operation.
@@ -25,9 +25,9 @@ extension CIImage {
     /// using the given blend kernel in the specified colorspace.
     ///
     /// The `extent` of the result image will be determined by `extent` of the receiver,
-    /// the `extent` of the `background` images and the `blendKernel` used. For most of the
-    /// builtin blend kernels (as well as custom blend kernels) the result image
-    /// `extent` will be the union of the receiver and background image extents.
+    /// the `extent` of the `background` images, and the `blendKernel` used. For most of the
+    /// built-in blend kernels (as well as custom blend kernels) the result image's
+    /// `extent` will be the union of the receiver's and background image's extents.
     ///
     /// - Parameters:
     ///   - background: An image to serve as the background of the compositing operation.

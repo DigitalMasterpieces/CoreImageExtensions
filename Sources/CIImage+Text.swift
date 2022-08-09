@@ -13,10 +13,10 @@ extension CIImage {
     /// Generates an image that contains the given text.
     /// - Parameters:
     ///   - text: The string of text to render.
-    ///   - fontName: The name of the font that should be used for rendering the text.
-    ///   - fontSize: The size of the font that should be used for rendering the text.
-    ///   - color: The color of the text. The background of the text will be transparent.
-    ///   - padding: A padding to add around the text, effectively increasing the text's virtual `extent`.
+    ///   - fontName: The name of the font that should be used for rendering the text. Defaults to "HelveticaNeue".
+    ///   - fontSize: The size of the font that should be used for rendering the text. Defaults to 12 pt.
+    ///   - color: The color of the text. The background of the text will be transparent. Defaults to black.
+    ///   - padding: A padding to add around the text, effectively increasing the text's virtual `extent`. Default is no padding.
     /// - Returns: An image containing the rendered text.
     @available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
     public static func text(_ text: String, fontName: String = "HelveticaNeue", fontSize: CGFloat = 12.0, color: CIColor = .black, padding: CGFloat = 0.0) -> CIImage? {

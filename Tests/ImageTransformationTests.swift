@@ -26,7 +26,7 @@ class ImageTransformationTests: XCTestCase {
     }
 
     func testCentering() {
-        let recenteredImage = self.testImage.centered(in: .zero)
+        let recenteredImage = self.testImage.centered(at: .zero)
         XCTAssertEqual(recenteredImage.extent, CGRect(origin: CGPoint(x: -100.0, y: -50.0), size: self.testImage.extent.size))
     }
 

@@ -57,7 +57,7 @@ public extension CIKernel {
     }
 
     /// Compiles a Core Image kernel at runtime from the given Metal `source` string.
-    /// If this feature is not supported by the OS, the legacy Core Image Kernel Language `ciklSource` are used instead.
+    /// If this feature is not supported by the OS, the legacy Core Image Kernel Language `ciklSource` is used instead.
     ///
     /// ⚠️ Important: There are a few limitations to this API:
     /// - Run-time compilation of Metal kernels is only supported starting from iOS 15 and macOS 12.
