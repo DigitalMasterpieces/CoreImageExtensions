@@ -42,14 +42,14 @@ class ColorExtensionsTests: XCTestCase {
     }
 
     func testContrastColor() {
-        XCTAssertEqual(CIColor.white.contrastColor, .black)
-        XCTAssertEqual(CIColor.red.contrastColor, .white)
-        XCTAssertEqual(CIColor.green.contrastColor, .black)
-        XCTAssertEqual(CIColor.blue.contrastColor, .white)
-        XCTAssertEqual(CIColor.yellow.contrastColor, .black)
-        XCTAssertEqual(CIColor.cyan.contrastColor, .black)
-        XCTAssertEqual(CIColor.magenta.contrastColor, .black)
-        XCTAssertEqual(CIColor.black.contrastColor, .white)
+        XCTAssertEqual(CIColor.white.contrastOverlayColor, .black)
+        XCTAssertEqual(CIColor.red.contrastOverlayColor, .white)
+        XCTAssertEqual(CIColor.green.contrastOverlayColor, .black)
+        XCTAssertEqual(CIColor.blue.contrastOverlayColor, .white)
+        XCTAssertEqual(CIColor.yellow.contrastOverlayColor, .black)
+        XCTAssertEqual(CIColor.cyan.contrastOverlayColor, .black)
+        XCTAssertEqual(CIColor.magenta.contrastOverlayColor, .black)
+        XCTAssertEqual(CIColor.black.contrastOverlayColor, .white)
     }
 
 }

@@ -6,10 +6,9 @@ public extension CIImage {
 
     /// Returns a new image that represents the original image after scaling it by the given factors in x- and y-direction.
     ///
-    /// The interpolation used for the sampling technique used by the image.
+    /// The interpolation used for the scaling depends on the technique used by the image.
     /// This can be changed by calling `samplingLinear()` or `samplingNearest()` on the image
-    /// before calling this method.
-    /// Defaults to (bi)linear scaling.
+    /// before calling this method. Defaults to (bi)linear scaling when unchanged.
     ///
     /// - Parameters:
     ///   - x: The scale factor in x-direction.
@@ -39,7 +38,7 @@ public extension CIImage {
     /// Returns a new image that represents the original image after moving the center of its extent to the given point.
     /// - Parameter point: The new center point of the image.
     /// - Returns: A moved image with the new center point.
-    func centered(in point: CGPoint) -> CIImage {
+    func centered(at point: CGPoint) -> CIImage {
         return self.translatedBy(dx: point.x - self.extent.midX, dy: point.y - self.extent.midY)
     }
 

@@ -101,7 +101,7 @@ extension CIImage {
 
         // Put the label in the bottom left corner over the tile.
         // Use a contrast color that is always readable, regardless of the tile's color.
-        let labelImage = CIImage.text(label, fontName: self.labelFont, fontSize:  size.height / 8.0, color: color.contrastColor)!
+        let labelImage = CIImage.text(label, fontName: self.labelFont, fontSize:  size.height / 8.0, color: color.contrastOverlayColor)!
         return labelImage.moved(to: CGPoint(x: 5, y: 5)).composited(over: tile)
     }
 
@@ -127,7 +127,7 @@ extension CIImage {
         swatch = swatch.withRoundedCorners(radius: self.tileCornerRadius)!
 
         // Adjust placement of label and swatch.
-        label = label.centered(in: CGPoint(x: label.extent.midX, y: swatch.extent.midY))
+        label = label.centered(at: CGPoint(x: label.extent.midX, y: swatch.extent.midY))
         swatch = swatch.moved(to: CGPoint(x: label.extent.maxX, y: 0))
 
         return label.composited(over: swatch)
@@ -143,7 +143,7 @@ extension CIImage {
 
         // Put a label in the bottom left corner over the tile that displays the brightness value (also in nits).
         let labelText = String(format: "%.2f (%d nits)", brightness, Int(brightness * 500))
-        let labelColor = CIColor(extendedWhite: brightness)!.contrastColor
+        let labelColor = CIColor(extendedWhite: brightness)!.contrastOverlayColor
         let label = CIImage.text(labelText, fontName: self.labelFont, fontSize: size.height / 8.0, color: labelColor)!
         return label.moved(to: CGPoint(x: 5, y: 5)).composited(over: tile)
     }

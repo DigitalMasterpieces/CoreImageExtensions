@@ -22,7 +22,7 @@ public extension CIColor {
     ///
     /// - Parameters:
     ///   - white: The unpremultiplied component value that should be use for all three color channels.
-    ///            This value can be of the `[0...1]` SDR range to create an EDR color.
+    ///            This value can be outside of the `[0...1]` SDR range to create an EDR color.
     ///   - alpha: The alpha (opacity) component of the color.
     convenience init?(extendedWhite white: CGFloat, alpha: CGFloat = 1.0) {
         guard let colorSpace = CGColorSpace.extendedLinearSRGBColorSpace else { return nil }
@@ -35,22 +35,22 @@ public extension CIColor {
     ///
     /// - Parameters:
     ///   - r: The unpremultiplied red component value.
-    ///        This value can be of the `[0...1]` SDR range to create an EDR color.
+    ///        This value can be outside of the `[0...1]` SDR range to create an EDR color.
     ///   - g: The unpremultiplied green component value.
-    ///        This value can be of the `[0...1]` SDR range to create an EDR color.
+    ///        This value can be outside of the `[0...1]` SDR range to create an EDR color.
     ///   - b: The unpremultiplied blue component value.
-    ///        This value can be of the `[0...1]` SDR range to create an EDR color.
+    ///        This value can be outside of the `[0...1]` SDR range to create an EDR color.
     ///   - a: The alpha (opacity) component of the color.
     convenience init?(extendedRed r: CGFloat, green g: CGFloat, blue b: CGFloat, alpha a: CGFloat = 1.0) {
         guard let colorSpace = CGColorSpace.extendedLinearSRGBColorSpace else { return nil }
         self.init(red: r, green: g, blue: b, alpha: a, colorSpace: colorSpace)
     }
 
-    /// Returns a color that provide a high contrast to the receiver.
+    /// Returns a color that provides a high contrast to the receiver.
     ///
     /// The returned color is either black or white, depending on which has the better visibility
     /// when put over the receiver color.
-    var contrastColor: CIColor {
+    var contrastOverlayColor: CIColor {
         let lightColor = CIColor.white
         let darkColor = CIColor.black
 
