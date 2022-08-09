@@ -50,7 +50,7 @@ public extension CIColor {
     ///
     /// The returned color is either black or white, depending on which has the better visibility
     /// when put over the receiver color.
-    var contrastColor: CIColor {
+    var contrastOverlayColor: CIColor {
         let lightColor = CIColor.white
         let darkColor = CIColor.black
 
