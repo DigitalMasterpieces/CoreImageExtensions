@@ -61,7 +61,7 @@ public extension CIKernel {
     ///
     /// ⚠️ Important: There are a few limitations to this API:
     /// - Run-time compilation of Metal kernels is only supported starting from iOS 15 and macOS 12.
-    ///   If the system doesn't support this feature, the legacy Core Image Kernel Language `ciklSource` are used instead.
+    ///   If the system doesn't support this feature, the legacy Core Image Kernel Language `ciklSource` is used instead.
     ///   Note, however, that this API was deprecated with macOS 10.14 and can drop support soon.
     ///   This API is meant to be used as a temporary solution for when older OSes than iOS 15 and macOS 12 still need to be supported.
     /// - It only works when the Metal kernels are attributed as `[[ stitchable ]]`.
