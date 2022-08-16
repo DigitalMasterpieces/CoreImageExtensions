@@ -51,8 +51,8 @@ class TestPatternTests: XCTestCase {
     /// Since EDR can store values as-is, we only generate one 16-bit float image in extended linear sRGB color space,
     /// which are the reference properties when composing the test pattern.
     func testEXRPatternGeneration() throws {
-        let testPatter = self.testPattern(for: .exr, bitDepth: 16, isFloat: true, colorSpace: extendedLinearSRGBColorSpace)
-        let data = try self.context.exrRepresentation(of: testPatter, format: .RGBAh, colorSpace: extendedLinearSRGBColorSpace.cgSpace)
+        let testPattern = self.testPattern(for: .exr, bitDepth: 16, isFloat: true, colorSpace: extendedLinearSRGBColorSpace)
+        let data = try self.context.exrRepresentation(of: testPattern, format: .RGBAh, colorSpace: extendedLinearSRGBColorSpace.cgSpace)
         self.attach(data, type: .exr, bitDepth: 16, isFloat: true, colorSpace: extendedLinearSRGBColorSpace)
 
     }
@@ -63,8 +63,8 @@ class TestPatternTests: XCTestCase {
     /// We also generate images in the HDR color spaces for reference.
     func testTIFFPatternGeneration() {
         for colorSpace in highBitColorSpaces + [extendedLinearSRGBColorSpace] {
-            let testPatter = self.testPattern(for: .tiff, bitDepth: 16, isFloat: true, colorSpace: colorSpace)
-            let data = self.context.tiffRepresentation(of: testPatter, format: .RGBAh, colorSpace: colorSpace.cgSpace)!
+            let testPattern = self.testPattern(for: .tiff, bitDepth: 16, isFloat: true, colorSpace: colorSpace)
+            let data = self.context.tiffRepresentation(of: testPattern, format: .RGBAh, colorSpace: colorSpace.cgSpace)!
             self.attach(data, type: .tiff, bitDepth: 16, isFloat: true, colorSpace: colorSpace)
         }
     }
@@ -74,14 +74,14 @@ class TestPatternTests: XCTestCase {
     /// However, PNG does not support floating-point values, so we don't need to generate an image in extended color space.
     func testPNGPatternGeneration() {
         for colorSpace in lowBitColorSpaces {
-            let testPatter = self.testPattern(for: .png, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
-            let data = self.context.pngRepresentation(of: testPatter, format: .RGBA8, colorSpace: colorSpace.cgSpace)!
+            let testPattern = self.testPattern(for: .png, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
+            let data = self.context.pngRepresentation(of: testPattern, format: .RGBA8, colorSpace: colorSpace.cgSpace)!
             self.attach(data, type: .png, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
         }
 
         for colorSpace in highBitColorSpaces {
-            let testPatter = self.testPattern(for: .png, bitDepth: 16, isFloat: false, colorSpace: colorSpace)
-            let data = self.context.pngRepresentation(of: testPatter, format: .RGBAh, colorSpace: colorSpace.cgSpace)!
+            let testPattern = self.testPattern(for: .png, bitDepth: 16, isFloat: false, colorSpace: colorSpace)
+            let data = self.context.pngRepresentation(of: testPattern, format: .RGBAh, colorSpace: colorSpace.cgSpace)!
             self.attach(data, type: .png, bitDepth: 16, isFloat: false, colorSpace: colorSpace)
         }
     }
@@ -90,8 +90,8 @@ class TestPatternTests: XCTestCase {
     /// JPEG only supports 8-bit color depth, so we only generate images in color spaces that are fitting for 8-bit.
     func testJPEGPatternGeneration() {
         for colorSpace in lowBitColorSpaces {
-            let testPatter = self.testPattern(for: .jpeg, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
-            let data = self.context.jpegRepresentation(of: testPatter, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
+            let testPattern = self.testPattern(for: .jpeg, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
+            let data = self.context.jpegRepresentation(of: testPattern, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
             self.attach(data, type: .jpeg, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
         }
     }
@@ -101,15 +101,15 @@ class TestPatternTests: XCTestCase {
     /// However, HEIC does not support floating-point values, so we don't need to generate an image in extended color space.
     func testHEICPatternGeneration() throws {
         for colorSpace in lowBitColorSpaces {
-            let testPatter = self.testPattern(for: .heic, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
-            let data = self.context.pngRepresentation(of: testPatter, format: .RGBA8, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
+            let testPattern = self.testPattern(for: .heic, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
+            let data = self.context.pngRepresentation(of: testPattern, format: .RGBA8, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
             self.attach(data, type: .heic, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
         }
 
         if #available(iOS 15.0, macOS 12.0, macCatalyst 15.0, tvOS 15.0, *) {
             for colorSpace in highBitColorSpaces {
-                let testPatter = self.testPattern(for: .heic, bitDepth: 10, isFloat: false, colorSpace: colorSpace)
-                let data = self.context.pngRepresentation(of: testPatter, format: .RGBAh, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
+                let testPattern = self.testPattern(for: .heic, bitDepth: 10, isFloat: false, colorSpace: colorSpace)
+                let data = self.context.pngRepresentation(of: testPattern, format: .RGBAh, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
                 self.attach(data, type: .heic, bitDepth: 10, isFloat: false, colorSpace: colorSpace)
             }
         }
@@ -118,9 +118,9 @@ class TestPatternTests: XCTestCase {
     /// Generates EDR & wide gamut test pattern images in PNG file format that is tone-mapped from BT.2100 PQ (HDR) to sRGB
     /// to demonstrate what it might roughly like on EDR-capable screens (just much dimmer).
     func testToneMappedPatternGeneration() {
-        let testPatter = CIImage.testPattern(label: "BT.2100 PQ (HDR) tone-mapped to sRGB")
+        let testPattern = CIImage.testPattern(label: "BT.2100 PQ (HDR) tone-mapped to sRGB")
         // Create a pattern image that contains HDR data.
-        let hdrData = self.context.pngRepresentation(of: testPatter, format: .RGBAh, colorSpace: .itur2100PQColorSpace!)!
+        let hdrData = self.context.pngRepresentation(of: testPattern, format: .RGBAh, colorSpace: .itur2100PQColorSpace!)!
         // Load that data again into a `CIImage` and let CI perform tone-mapping to SDR.
         let toneMappedImage = CIImage(data: hdrData, options: [CIImageOption.toneMapHDRtoSDR: true])!
         // Render the tone-mapped SDR image in sRGB and save as attachment.

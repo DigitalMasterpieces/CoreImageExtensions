@@ -5,7 +5,7 @@ import CoreImage.CIFilterBuiltins
 /// Here we create an EDR brightness and wide gamut color test pattern image that can be used, for instance,
 /// to verify colors are displayed correctly, filters conserve those color properties correctly, etc.
 /// It also showcases how Core Image can be used for image compositing, though in production
-/// a composition with this complexity is probably better done with Core Graphits since its too slow in CI.
+/// a composition with this complexity is probably better done with Core Graphics since its too slow in CI.
 /// ⚠️ For testing purposes only! This is not meant to be shipped in production code since generating
 ///    the pattern is slow and potentially error-prone (lots of force-unwraps in here for convenience).
 @available(iOS 12.3, macCatalyst 13.1, macOS 10.14.3, tvOS 12.0, *)
