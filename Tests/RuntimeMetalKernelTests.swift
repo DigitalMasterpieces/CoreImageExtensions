@@ -3,6 +3,7 @@ import CoreImageExtensions
 import XCTest
 
 
+@available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
 class RuntimeMetalKernelTests: XCTestCase {
 
     let metalKernelCode = """

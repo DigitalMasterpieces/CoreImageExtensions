@@ -1,6 +1,7 @@
 import CoreImage
 
 
+@available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
 public extension CIKernel {
 
     /// Errors that can be thrown by the Metal kernel runtime compilation APIs.
@@ -99,6 +100,7 @@ public extension CIKernel {
 
 }
 
+@available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
 public extension CIBlendKernel {
 
     /// ⚠️ `CIBlendKernel` can't be compiled from Metal sources at runtime at the moment.
