@@ -102,14 +102,14 @@ class TestPatternTests: XCTestCase {
     func testHEICPatternGeneration() throws {
         for colorSpace in lowBitColorSpaces {
             let testPattern = self.testPattern(for: .heic, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
-            let data = self.context.pngRepresentation(of: testPattern, format: .RGBA8, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
+            let data = self.context.heifRepresentation(of: testPattern, format: .RGBA8, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
             self.attach(data, type: .heic, bitDepth: 8, isFloat: false, colorSpace: colorSpace)
         }
 
         if #available(iOS 15.0, macOS 12.0, macCatalyst 15.0, tvOS 15.0, *) {
             for colorSpace in highBitColorSpaces {
                 let testPattern = self.testPattern(for: .heic, bitDepth: 10, isFloat: false, colorSpace: colorSpace)
-                let data = self.context.pngRepresentation(of: testPattern, format: .RGBAh, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])!
+                let data = try! self.context.heif10Representation(of: testPattern, colorSpace: colorSpace.cgSpace, options: [.quality: 1.0])
                 self.attach(data, type: .heic, bitDepth: 10, isFloat: false, colorSpace: colorSpace)
             }
         }
