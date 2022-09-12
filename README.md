@@ -256,3 +256,35 @@ let kernel = try CIKernel.kernel(withMetalString: metalKernelCode, fallbackCIKLS
 > This way the compiler can check your sources at build-time, and initializing a CIKernel at runtime from pre-compiled sources is much faster.
 > A notable exception might arise when you need a custom kernel inside a Swift package since CI Metal kernels can't be built with Swift packages (yet). 
 > But this should only be used as a last resort.
+
+## EDR & Wide Gamut Test Pattern
+Most Apple devices can capture and display images with colors that are outside of the standard sRGB color gamut and range (_Standard Dynamic Range_, _SDR_).
+The Display P3 color space is the de facto standard on Apple platforms now.
+Some high-end devices and monitors also have XDR screens that can go even beyond Display P3, and new iPhones can record movies in HDR now.
+All those systems (wide color gamut, high display brightness, extended color spaces) are subsumed by Apple under the term _EDR_ (_Extended Dynamic Range_).
+
+To ensure that all parts of our apps can properly process and display EDR media, we designed a test pattern image that
+- displays a stripe of tiles with increasing pixel brightness value (up to the XDRs peak brightness of 1600 nits) 
+- and swatches of various colors in three common color gamuts (sRGB, Display P3, and BT.2020).
+
+![EDR & Wide Gamut Test Pattern](EDR_Wide_Gamut_Test_Patterns/TestPattern_tone-mapped.png)
+
+> **_Note:_**
+> The image above is tone-mapped from HDR to SDR to demonstrate what it will roughly look like on a HDR-capable screen (just much dimmer).
+> If you want to see the colors in their correct form (and see where you screen has to clip colors), check out the extended range [EXR](EDR_Wide_Gamut_Test_Patterns/TestPattern_16bit_float_extended-linear-sRGB.exr?raw=true) or [TIFF](EDR_Wide_Gamut_Test_Patterns/TestPattern_16bit_float_extended-linear-sRGB.tiff?raw=true) version of the image.
+> The tone-mapped PNG version above was chosen so you can better see the intent of the pattern.
+
+The pattern image itself is generated with Core Image compositing techniques.
+You can generate it as `CIImage` just like this:
+```swift
+let testPattern = CIImage.testPattern()
+```
+
+> **_Note:_**
+> You should use this for testing purposes only! 
+> This is not meant to be shipped in production code since generating the pattern is slow and potentially error-prone (lots of force-unwraps in the code for convenience).
+> If you need a fast-loading version of it, best use the pre-generated [EXR version](EDR_Wide_Gamut_Test_Patterns/TestPattern_16bit_float_extended-linear-sRGB.exr?raw=true).
+
+You can find many pre-generated test pattern images in various file formats, bit depths, and color spaces in the [EDR_Wide_Gamut_Test_Patterns](EDR_Wide_Gamut_Test_Patterns/) folder for download.
+Those images can also be generated using the `TestPatternTests`.
+The generated images are attached to the test runs and can be found when opening the test result in the Reports navigator.
