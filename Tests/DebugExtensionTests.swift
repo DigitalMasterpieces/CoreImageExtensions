@@ -10,7 +10,7 @@ class DebugExtensionTests: XCTestCase {
 
 
     func testImageStatistics() {
-        let wholeStats = testImage.debug().statistics()
+        let wholeStats = testImage.debug.statistics()
         XCTAssertEqual(wholeStats.description,
         """
         min: (r: -0.000, g: -0.000, b: -0.000, a:  0.000)
@@ -18,7 +18,7 @@ class DebugExtensionTests: XCTestCase {
         avg: (r:  0.423, g:  0.423, b:  0.423, a:  0.770)
         """)
 
-        let areaStats = testImage.debug().statistics(in: CGRect(x: 25, y: 25, width: 50, height: 50))
+        let areaStats = testImage.debug.statistics(in: CGRect(x: 25, y: 25, width: 50, height: 50))
         XCTAssertEqual(areaStats.description,
         """
         min: (r:  0.076, g:  0.076, b:  0.076, a:  1.000)
@@ -28,7 +28,7 @@ class DebugExtensionTests: XCTestCase {
     }
 
     func testRenderInfo() {
-        let result = testImage.debug().render()
+        let result = testImage.debug.render()
         // Just test that those APIs don't crash.
         _ = result.image
         _ = testImage.pdfRepresentation

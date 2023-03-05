@@ -29,6 +29,11 @@ public extension CIImage {
         DebugProxy(image: self, context: context)
     }
 
+    /// Creates a `DebugProxy` object that allows to call various methods
+    /// for debugging and introspection of the receiver.
+    /// It will use the internal singleton `CIContext` that Apple uses when generating debug artifacts.
+    var debug: DebugProxy { self.debug() }
+
 }
 
 #endif
