@@ -12,7 +12,7 @@ public extension CIImage.DebugProxy {
     /// The graphs can be viewed when using Quick Look on the returned `task` or `info` object.
     struct RenderResult {
 
-        private let debugProxy: CIImage.DebugProxy
+        let debugProxy: CIImage.DebugProxy
 
         /// The rendered image in 16-bit half float format as `CGImage`.
         /// This is the same format that Core Image uses internally during processing (with default settings).
@@ -104,4 +104,3 @@ public extension CIRenderInfo {
 }
 
 #endif
-
