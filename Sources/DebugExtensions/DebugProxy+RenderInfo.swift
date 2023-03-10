@@ -78,6 +78,16 @@ public extension CIImage.DebugProxy {
 
 }
 
+public extension CIImage.DebugProxy {
+    /// Renders the `image` into a `CGImage` using the `context`'s `workingFormat` and `workingColorSpace` and returns it.
+    ///
+    /// You can use this property as an alternative when QuickLook on the `CIImage` fails
+    /// or when you only want to see the rendered image without the filter graph.
+    var cgImage: CGImage {
+        return self.context.createCGImage(self.image, from: self.image.extent, format: self.context.workingFormat, colorSpace: self.context.workingColorSpace)!
+    }
+}
+
 public extension CIImage {
     /// Exposes the internal API used to create the Quick Look representation of a `CIImage` as a `PDFDocument`.
     /// This shows the rendered image as well as the unoptimized filter graph.

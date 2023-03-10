@@ -31,6 +31,7 @@ class DebugExtensionTests: XCTestCase {
         let result = testImage.debug.render()
         // Just test that those APIs don't crash.
         _ = result.image
+        _ = testImage.debug.cgImage
         _ = testImage.pdfRepresentation
         _ = result.renderTask.pdfRepresentation
         _ = result.renderInfo.pdfRepresentation
