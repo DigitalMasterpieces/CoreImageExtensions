@@ -9,6 +9,27 @@ import CoreImage
 
 import AppKit
 
+public extension CIImage.DebugProxy {
+
+    /// Renders the image with the given settings and opens a system dialog for picking a folder where to save the image to.
+    /// - Parameters:
+    ///   - filePrefix: A prefix that is added to the image file. By default, the name of the app is used.
+    ///   - codec: The codec of the exported image. Uses uncompressed TIFF by default.
+    ///   - format: The image format. This influences bit depth (8-, 16-, or 32-bit) and pixel format (uint or float). Defaults to 8-bit uint.
+    ///             Note that not all formats are supported by all codecs. E.g., `jpeg` and `heif` only supports 8-bit formats.
+    ///   - quality: The quality of the exported image, i.e., the amount of compression. Only supported by `jpeg`, `heif`, and `heif10` codecs.
+    ///   - colorSpace: The color space of the exported image. By default, the Display P3 color space is used.
+    ///                 Note that it needs to match the chosen `format`, i.e., a single-channel format needs a grayscale color space.
+    func export(filePrefix: String? = nil, codec: ImageCodec = .tiff, format: CIFormat = .RGBA8, quality: Float = 1.0, colorSpace: CGColorSpace? = nil) {
+        let filePrefix = exportFilePrefix(filePrefix: filePrefix)
+        openSavePanel(message: "Select folder where to save the image") { url in
+            let imageURL = url.appendingPathComponent("\(filePrefix)_image").appendingPathExtension(codec.fileExtension)
+            self.write(to: imageURL, codec: codec, format: format, quality: quality, colorSpace: colorSpace)
+        }
+    }
+
+}
+
 public extension CIImage.DebugProxy.RenderResult {
 
     /// Opens a system dialog for picking a folder where to export the rendering artifacts
@@ -52,6 +73,26 @@ private func openSavePanel(message: String, callback: @escaping (URL) -> Void) {
 
 import UIKit
 
+public extension CIImage.DebugProxy {
+
+    /// Renders the image with the given settings and opens a share sheet for exporting the image.
+    /// - Parameters:
+    ///   - filePrefix: A prefix that is added to the image file. By default, the name of the app is used.
+    ///   - codec: The codec of the exported image. Uses uncompressed TIFF by default.
+    ///   - format: The image format. This influences bit depth (8-, 16-, or 32-bit) and pixel format (uint or float). Defaults to 8-bit uint.
+    ///             Note that not all formats are supported by all codecs. E.g., `jpeg` and `heif` only supports 8-bit formats.
+    ///   - quality: The quality of the exported image, i.e., the amount of compression. Only supported by `jpeg`, `heif`, and `heif10` codecs.
+    ///   - colorSpace: The color space of the exported image. By default, the Display P3 color space is used.
+    ///                 Note that it needs to match the chosen `format`, i.e., a single-channel format needs a grayscale color space.
+    func export(filePrefix: String? = nil, codec: ImageCodec = .tiff, format: CIFormat = .RGBAh, quality: Float = 1.0, colorSpace: CGColorSpace? = nil) {
+        let filePrefix = exportFilePrefix(filePrefix: filePrefix)
+        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(filePrefix)_image").appendingPathExtension(codec.fileExtension)
+        self.write(to: fileURL, codec: codec, format: format, quality: quality, colorSpace: colorSpace)
+        openShareSheet(for: [fileURL])
+    }
+
+}
+
 public extension CIImage.DebugProxy.RenderResult {
 
     /// Opens a share sheet for exporting the rendering artifacts (the image as TIFF and various rendering graphs as PDFs).
@@ -88,6 +129,50 @@ private func openShareSheet(for items: [URL]) {
 
 
 // MARK: - Common
+
+extension CIImage.DebugProxy {
+
+    public enum ImageCodec {
+        case exr
+        case jpeg
+        case heif
+        @available(iOS 15, macOS 12, macCatalyst 15, *)
+        case heif10
+        case png
+        case tiff
+
+        fileprivate var fileExtension: String {
+            switch self {
+                case .exr: return "exr"
+                case .jpeg: return "jpeg"
+                case .heif, .heif10: return "heic"
+                case .png: return "png"
+                case .tiff: return "tiff"
+            }
+        }
+    }
+
+    private func write(to fileURL: URL, codec: ImageCodec, format: CIFormat = .RGBA8, quality: Float = 1.0, colorSpace: CGColorSpace?) {
+        let colorSpace = colorSpace ?? .displayP3ColorSpace ?? CGColorSpaceCreateDeviceRGB()
+        switch codec {
+            case .exr:
+                try! self.context.writeEXRRepresentation(of: self.image, to: fileURL, format: format, colorSpace: colorSpace)
+            case .jpeg:
+                try! self.context.writeJPEGRepresentation(of: self.image, to: fileURL, colorSpace: colorSpace, quality: quality)
+            case .heif:
+                try! self.context.writeHEIFRepresentation(of: self.image, to: fileURL, format: format, colorSpace: colorSpace, quality: quality)
+            case .heif10:
+                if #available(iOS 15, macOS 12, macCatalyst 15, *) {
+                    try! self.context.writeHEIF10Representation(of: self.image, to: fileURL, colorSpace: colorSpace, quality: quality)
+                }
+            case .png:
+                try! self.context.writePNGRepresentation(of: self.image, to: fileURL, format: format, colorSpace: colorSpace)
+            case .tiff:
+                try! self.context.writeTIFFRepresentation(of: self.image, to: fileURL, format: format, colorSpace: colorSpace)
+        }
+    }
+
+}
 
 /// Creates a prefix to use for exported files, containing the given `filePrefix` (or the app name if not given) and the current time.
 private func exportFilePrefix(filePrefix: String?) -> String {
