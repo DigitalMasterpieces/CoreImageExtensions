@@ -6,7 +6,7 @@ import XCTest
 class ImageTransformationTests: XCTestCase {
 
     /// Empty dummy image we can transform around to test effects on image extent.
-    let testImage = CIImage.clear.cropped(to: CGRect(x: 0, y: 0, width: 200, height: 100))
+    let testImage = CIImage(color: .clear).cropped(to: CGRect(x: 0, y: 0, width: 200, height: 100))
 
 
     func testScaling() {
