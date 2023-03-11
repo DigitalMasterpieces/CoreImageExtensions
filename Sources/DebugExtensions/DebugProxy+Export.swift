@@ -1,5 +1,10 @@
 #if DEBUG
 
+import CoreImage
+
+
+// MARK: - macOS
+
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
 
 import AppKit
@@ -11,26 +16,37 @@ public extension CIImage.DebugProxy.RenderResult {
     /// - Parameter filePrefix: A prefix that is added to the files. By default, the name of the app is used.
     func export(filePrefix: String? = nil) {
         let filePrefix = exportFilePrefix(filePrefix: filePrefix)
-
-        // Use the system panel for picking the folder where to save the files.
-        let openPanel = NSOpenPanel()
-        openPanel.message = "Select folder where to save the render results"
-        openPanel.prompt = "Select"
-        openPanel.canChooseFiles = false
-        openPanel.canChooseDirectories = true
-        openPanel.canCreateDirectories = true
-
-        openPanel.begin { response in
-            guard response == .OK else { return }
+        openSavePanel(message: "Select folder where to save the render results") { url in
             // Write rendering results into the picked folder.
-            self.writeResults(to: openPanel.url!, with: filePrefix)
+            self.writeResults(to: url, with: filePrefix)
         }
     }
 
 }
 
-#endif
+/// Opens the system panel for selecting a folder to save rendering results to.
+/// - Parameters:
+///   - message: A message to display on top of the panel.
+///   - callback: A callback for writing the files to the chosen URL.
+private func openSavePanel(message: String, callback: @escaping (URL) -> Void) {
+    // Use the system panel for picking the folder where to save the files.
+    let openPanel = NSOpenPanel()
+    openPanel.message = message
+    openPanel.prompt = "Select"
+    openPanel.canChooseFiles = false
+    openPanel.canChooseDirectories = true
+    openPanel.canCreateDirectories = true
 
+    openPanel.begin { response in
+        guard response == .OK else { return }
+        callback(openPanel.url!)
+    }
+}
+
+#endif // AppKit
+
+
+// MARK: - iOS
 
 #if canImport(UIKit)
 
@@ -44,27 +60,34 @@ public extension CIImage.DebugProxy.RenderResult {
     func export(filePrefix: String? = nil) {
         let filePrefix = exportFilePrefix(filePrefix: filePrefix)
         let shareItems = self.writeResults(to: FileManager.default.temporaryDirectory, with: filePrefix)
-
-        let window = UIApplication.shared.windows.first
-
-        if #available(iOS 14, *), ProcessInfo().isMacCatalystApp || ProcessInfo().isiOSAppOnMac {
-            let documentPicker = UIDocumentPickerViewController(forExporting: shareItems)
-            window?.rootViewController?.present(documentPicker, animated: true)
-        } else {
-            let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-            activityViewController.completionWithItemsHandler = { _, _, _, _ in
-                shareItems.forEach { try? FileManager.default.removeItem(at: $0) }
-            }
-            activityViewController.popoverPresentationController?.sourceView = window
-            activityViewController.popoverPresentationController?.sourceRect = CGRect(x: window?.bounds.midX ?? 0, y: 0, width: 1, height: 20)
-            window?.rootViewController?.present(activityViewController, animated: true)
-        }
+        openShareSheet(for: shareItems)
     }
 
 }
 
-#endif
+/// Opens a share sheet for exporting the given files from the application's main window.
+/// - Parameter items: A list of files to export. The files will be either moved or deleted after successful export.
+private func openShareSheet(for items: [URL]) {
+    let window = UIApplication.shared.windows.first
 
+    if #available(iOS 14, *), ProcessInfo().isMacCatalystApp || ProcessInfo().isiOSAppOnMac {
+        let documentPicker = UIDocumentPickerViewController(forExporting: items)
+        window?.rootViewController?.present(documentPicker, animated: true)
+    } else {
+        let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        activityViewController.completionWithItemsHandler = { _, _, _, _ in
+            items.forEach { try? FileManager.default.removeItem(at: $0) }
+        }
+        activityViewController.popoverPresentationController?.sourceView = window
+        activityViewController.popoverPresentationController?.sourceRect = CGRect(x: window?.bounds.midX ?? 0, y: 0, width: 1, height: 20)
+        window?.rootViewController?.present(activityViewController, animated: true)
+    }
+}
+
+#endif // UIKit
+
+
+// MARK: - Common
 
 /// Creates a prefix to use for exported files, containing the given `filePrefix` (or the app name if not given) and the current time.
 private func exportFilePrefix(filePrefix: String?) -> String {
@@ -77,7 +100,6 @@ private func exportFilePrefix(filePrefix: String?) -> String {
     let timeString = dateFormatter.string(from: Date())
     return filePrefix.appending(timeString)
 }
-
 
 private extension CIImage.DebugProxy.RenderResult {
 
@@ -98,8 +120,11 @@ private extension CIImage.DebugProxy.RenderResult {
 
 }
 
-
+#if canImport(MobileCoreServices)
+import MobileCoreServices
+#else
 import CoreServices
+#endif
 
 private extension CGImage {
 
@@ -112,4 +137,4 @@ private extension CGImage {
 
 }
 
-#endif
+#endif // DEBUG
