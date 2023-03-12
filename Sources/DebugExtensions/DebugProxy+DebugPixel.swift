@@ -24,10 +24,12 @@ public extension CIImage.DebugProxy {
             formatter.maximumFractionDigits = 3
             formatter.minimumFractionDigits = 3
             formatter.positivePrefix = " "
-            let r = formatter.string(from: NSNumber(value: self.r))!
-            let g = formatter.string(from: NSNumber(value: self.g))!
-            let b = formatter.string(from: NSNumber(value: self.b))!
-            let a = formatter.string(from: NSNumber(value: self.a))!
+            /// Round very small values to zero to avoid `-0.000` values when printing.
+            let value = self.value.cleaned
+            let r = formatter.string(from: NSNumber(value: value.r))!
+            let g = formatter.string(from: NSNumber(value: value.g))!
+            let b = formatter.string(from: NSNumber(value: value.b))!
+            let a = formatter.string(from: NSNumber(value: value.a))!
             return (r, g, b, a)
         }
 
@@ -45,6 +47,17 @@ public extension CIImage.DebugProxy {
         }
     }
 
+}
+
+
+private extension Pixel<Float32> {
+    /// Rounds very small values to zero to avoid `-0.000` values when printing.
+    var cleaned: Self { return Self(self.r.cleaned, self.g.cleaned, self.b.cleaned, self.a.cleaned) }
+}
+
+private extension Float32 {
+    /// Rounds very small values to zero to avoid `-0.000` values when printing.
+    var cleaned: Self { return (abs(self) < 0.0001) ? 0.0 : self }
 }
 
 #endif

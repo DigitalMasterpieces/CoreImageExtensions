@@ -14,7 +14,7 @@ class DebugExtensionTests: XCTestCase {
         let wholeStats = testImage.debug.statistics()
         XCTAssertEqual(wholeStats.description,
         """
-        min: (r: -0.000, g: -0.000, b: -0.000, a:  0.000)
+        min: (r:  0.000, g:  0.000, b:  0.000, a:  0.000)
         max: (r:  1.004, g:  1.004, b:  1.004, a:  1.000)
         avg: (r:  0.423, g:  0.423, b:  0.423, a:  0.770)
         """)
@@ -24,7 +24,7 @@ class DebugExtensionTests: XCTestCase {
         """
         min: (r:  0.076, g:  0.076, b:  0.076, a:  1.000)
         max: (r:  1.004, g:  1.004, b:  1.004, a:  1.000)
-        avg: (r:  0.676, g:  0.670, b:  0.670, a:  1.000)
+        avg: (r:  0.676, g:  0.671, b:  0.671, a:  1.000)
         """)
     }
 
