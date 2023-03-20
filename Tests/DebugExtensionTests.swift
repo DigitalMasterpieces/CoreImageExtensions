@@ -19,12 +19,12 @@ class DebugExtensionTests: XCTestCase {
         avg: (r:  0.423, g:  0.423, b:  0.423, a:  0.770)
         """)
 
-        let areaStats = testImage.debug.statistics(in: CGRect(x: 25, y: 25, width: 50, height: 50))
+        let areaStats = testImage.debug.statistics(in: CGRect(x: 25, y: 25, width: 50, height: 50), colorSpace: .sRGBColorSpace)
         XCTAssertEqual(areaStats.description,
         """
-        min: (r:  0.076, g:  0.076, b:  0.076, a:  1.000)
-        max: (r:  1.004, g:  1.004, b:  1.004, a:  1.000)
-        avg: (r:  0.676, g:  0.671, b:  0.671, a:  1.000)
+        min: (r:  0.306, g:  0.305, b:  0.306, a:  1.000)
+        max: (r:  1.002, g:  1.002, b:  1.002, a:  1.000)
+        avg: (r:  0.841, g:  0.838, b:  0.838, a:  1.000)
         """)
     }
 

@@ -29,11 +29,13 @@ public extension CIImage.DebugProxy {
     }
 
 
-    @available(iOS 12.0, macOS 10.5, macCatalyst 13.0, tvOS 12.0, *)
     /// Calculates statistics (per-component minimum, maximum, average) of image pixels.
-    /// - Parameter rect: The area of the image from which to gather the statistics. Defaults to the whole image.
+    /// - Parameters:
+    ///   - rect: The area of the image from which to gather the statistics. Defaults to the whole image.
+    ///   - colorSpace: The export color space used during rendering. If `nil`, the export color space of the context is used.
     /// - Returns: An `ImageStatistics` containing the statistical values.
-    func statistics(in rect: CGRect? = nil) -> ImageStatistics {
+    @available(iOS 12.0, macOS 10.5, macCatalyst 13.0, tvOS 12.0, *)
+    func statistics(in rect: CGRect? = nil, colorSpace: CGColorSpace? = nil) -> ImageStatistics {
         let rect = rect ?? self.image.extent
         guard !rect.isInfinite else {
             fatalError("Image extent is infinite. Image statistics can only be gathered in a finite area.")
@@ -44,9 +46,9 @@ public extension CIImage.DebugProxy {
         // Generates a single-pixel image with average values.
         let avgImage = self.image.applyingFilter("CIAreaAverage", parameters: [kCIInputExtentKey: CIVector(cgRect: rect)])
         // Extract values and return as `ImageStatistics`.
-        return ImageStatistics(min: self.context.readFloat32PixelValue(from: minMaxImage, at: CGPoint(x: 0, y: 0)),
-                               max: self.context.readFloat32PixelValue(from: minMaxImage, at: CGPoint(x: 1, y: 0)),
-                               avg: self.context.readFloat32PixelValue(from: avgImage,    at: CGPoint(x: 0, y: 0)))
+        return ImageStatistics(min: self.context.readFloat32PixelValue(from: minMaxImage, at: CGPoint(x: 0, y: 0), colorSpace: colorSpace),
+                               max: self.context.readFloat32PixelValue(from: minMaxImage, at: CGPoint(x: 1, y: 0), colorSpace: colorSpace),
+                               avg: self.context.readFloat32PixelValue(from: avgImage,    at: CGPoint(x: 0, y: 0), colorSpace: colorSpace))
     }
 
 }
