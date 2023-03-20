@@ -252,7 +252,91 @@ let kernel = try CIKernel.kernel(withMetalString: metalKernelCode, fallbackCIKLS
 ```
 
 > **_Note:_**
-> It is generally a much better practice to compile Metal CIKernels along with the rest of your  and only use runtime compilation as an exception. 
+> It is generally a much better practice to compile Metal CIKernels along with the rest of your and only use runtime compilation as an exception. 
 > This way the compiler can check your sources at build-time, and initializing a CIKernel at runtime from pre-compiled sources is much faster.
 > A notable exception might arise when you need a custom kernel inside a Swift package since CI Metal kernels can't be built with Swift packages (yet). 
 > But this should only be used as a last resort.
+
+## Extensions for Debugging
+> **_⚠️ Warning:_**
+> The following extensions and APIs are only meant to be used in `DEBUG` mode!
+> Some of them access internal Core Image APIs and they are generally not written to fail gracefully.
+> That's why they are only available when compiling with `DEBUG` enabled.
+
+All debugging helps can be accessed through a `DebugProxy` object that can be accessed by calling `ciImage.debug`, which uses the internal debugging `CIContext` from Core Image.
+Alternatively, the debug context can also be specified with `ciImage.debug(with: myContext)`.  
+
+### Rendering an Image and getting Render Info
+When using QuickLook to inspect a `CIImage` during debugging, Core Image will first render the image _and it's filter graph_ and preset it together in the preview.
+For complex filter graphs, this might produce and undesirably cluttered preview, or even fail to show the QuickLook preview due to the long processing time.
+
+If you just want to see the rendered image, you can use the following accessor instead that just renders the image and returns it as `CGImage`, which should preview just fine:
+```swift
+let cgImage = ciImage.debug.cgImage
+```
+
+If you want to know more information of what happens inside of Core Image when rendering the image, you can use the following to obtain a debug `RenderInfo`:
+```swift
+let renderInfo = ciImage.debug.render() // with optional outputColorSpace parameter
+```
+The returned `RenderInfo` contains information about the render process:
+- `image`: The rendered image itself as `CGImage`
+- `renderTask`: The `CIRenderTask`, which describes the optimized rendering graph before it is executed by Core Image.
+- `renderInfo`: The `CIRenderInfo`, containing runtime information of the rendering as well as the concatenated filter graph
+
+There are also additional accessors for getting the different kind of filter graphs, similar to what [`CI_PRINT_TREE`](https://developer.apple.com/wwdc20/10089) can generate:
+- `initialGraph`: A `PDFDocument` that shows the rendered image as well as the unoptimized filter graph (similar to `CI_PRINT_TREE 1 pdf`).
+- `optimizedGraph`: A `PDFDocument` that shows the optimized filter graph before rendering (the same as `CI_PRINT_TREE 2 pdf`).
+- `programGraph`: A `PDFDocument` that shows runtime information about the rendering as well as the concatenated program filter graph (equivalent to `CI_PRINT_TREE 4 pdf`).
+
+### Getting Image Statistics
+The following API can be used to access some basic statistics about the image (`min`, `max`, and `avg` pixel values):
+```swift
+let stats = image.debug.statistics(in: region, colorSpace: .sRGBColorSpace) // both parameters optional
+print(stats)
+// min: (r:  0.076, g:  0.076, b:  0.076, a:  1.000)
+// max: (r:  1.004, g:  1.004, b:  1.004, a:  1.000)
+// avg: (r:  0.676, g:  0.671, b:  0.671, a:  1.000)
+```
+Keep in mind that the `colorSpace` influences the pixel values as well as their value range.
+If no color space was specified, the debug context's `workingColorSpace` is used.
+
+### Exporting an Image and its RenderInfo
+[`CI_PRINT_TREE`](https://developer.apple.com/wwdc20/10089) is a great tool for debugging, bit is also has some major downsides:
+- It needs to be explicitly enabled before running the application.
+- If not configured otherwise, it will generate a lot of filter graphs and it's hard to fine tune it to only log infos about a specific rendering result.
+- It does only print results when invoking actual `CIContext` render calls. It's not possible to get infos for arbitrary `CIImage`s.
+- The infos are stored in some temporary directory, and especially on iOS it's hard to get them off device for evaluation.
+
+The following APIs can be used to easily export/save an image at any time:
+```swift
+// simple, exporting as 8-bit TIFF in context working space:
+ciImage.debug.export()`
+// exports the image as file "<AppName>_09-41-00_image.tiff"
+
+// ... or with parameters (see method docs for more details):
+ciImage.debug.export(filePrefix: "Debug", codec: .jpeg, format: .RGBA8, quality: 0.7, colorSpace: .sRGBColorSpace)
+// exports image as file "Debug_09-41-00_image.jpeg"
+```
+
+An image's render info can also be exported.
+Exporting the render info will export the image as TIFF file and all three render graphs as PDF files:
+```swift
+ciImage.debug.render().export() // with optional filePrefix parameter
+// Exports the following files:
+//   <AppName>_09-41-00_image.tiff
+//   <AppName>_09-41-00_initial_graph.pdf
+//   <AppName>_09-41-00_optimized_graph.pdf
+//   <AppName>_09-41-00_program_graph.pdf    
+```
+
+On macOS, calling these methods will trigger the system dialog for choosing a directory to save the files to.
+On iOS, a system share sheet containing the exported items will open on the main window.
+It can be used, for instance, to AirDrop the files to a computer, or for saving to Files.
+
+The `export` methods can be called for any image at any time, even from a break point action.
+
+### Other useful Extensions
+`CIImage`, `CIRenderTask`, and `CIRenderInfo` now have a `pdfRepresentation` that exposes the internal API that is used to generate the filter graphs for QuickLook and `CI_PRINT_TREE` as `PDFDocument`.
+This is useful when QuickLook fails to generate the preview in time for large filter graphs.
+Just load the `pdfRepresentation` into a variable and QuickLook it instead.
