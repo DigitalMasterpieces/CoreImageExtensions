@@ -336,6 +336,10 @@ It can be used, for instance, to AirDrop the files to a computer, or for saving 
 
 The `export` methods can be called for any image at any time, even from a break point action.
 
+> **_Note:_**
+> In case your macOS app is sandboxed, you need to make sure to set the "User Selected File" access entitlement to "Read/Write".
+> Otherwise, the app won't have permission to save the debug files to the selected folder.
+
 ### Other useful Extensions
 `CIImage`, `CIRenderTask`, and `CIRenderInfo` now have a `pdfRepresentation` that exposes the internal API that is used to generate the filter graphs for QuickLook and `CI_PRINT_TREE` as `PDFDocument`.
 This is useful when QuickLook fails to generate the preview in time for large filter graphs.
