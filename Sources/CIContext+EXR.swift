@@ -88,7 +88,6 @@ public extension CIContext {
 }
 
 
-@available(iOS 13.0, macOS 10.15, macCatalyst 13.0, tvOS 13.0, *)
 public extension CIContext.Actor {
 
     /// Async version of the `CIContext` method with the same signature.

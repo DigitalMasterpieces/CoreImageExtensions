@@ -9,7 +9,6 @@ class DebugExtensionTests: XCTestCase {
     let testImage = CIFilter(name: "CIHueSaturationValueGradient", parameters: [kCIInputRadiusKey: 50])!.outputImage!
 
 
-    @available(iOS 12.0, macOS 10.5, macCatalyst 13.0, tvOS 12.0, *)
     func testImageStatistics() {
         let wholeStats = testImage.debug.statistics()
         XCTAssertEqual(wholeStats.description,

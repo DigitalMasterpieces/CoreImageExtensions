@@ -4,7 +4,6 @@ import CoreImage
 private var ASSOCIATED_ACTOR_KEY = "CoreImageExtensions.CIContext.async"
 
 
-@available(iOS 13.0, macOS 10.15, macCatalyst 13.0, tvOS 13.0, *)
 public extension CIContext {
 
     /// An actor for synchronizing calls to a `CIContext` and executing them in the background.

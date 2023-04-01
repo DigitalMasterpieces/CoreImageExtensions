@@ -16,7 +16,6 @@ extension CIImage {
     ///   - background: An image to serve as the background of the compositing operation.
     ///   - blendKernel: The `CIBlendKernel` to use for blending the image with the `background`.
     /// - Returns: An image object representing the result of the compositing operation.
-    @available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
     public func composited(over background: CIImage, using blendKernel: CIBlendKernel) -> CIImage? {
         return blendKernel.apply(foreground: self, background: background)
     }
@@ -34,7 +33,6 @@ extension CIImage {
     ///   - blendKernel: The `CIBlendKernel` to use for blending the image with the `background`.
     ///   - colorSpace: The `CGColorSpace` to perform the blend operation in.
     /// - Returns: An image object representing the result of the compositing operation.
-    @available(iOS 13.0, macCatalyst 13.1, macOS 10.15, tvOS 13.0, *)
     public func composited(over background: CIImage, using blendKernel: CIBlendKernel, colorSpace: CGColorSpace) -> CIImage? {
         return blendKernel.apply(foreground: self, background: background, colorSpace: colorSpace)
     }

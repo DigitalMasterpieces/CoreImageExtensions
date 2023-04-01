@@ -34,7 +34,6 @@ public extension CIImage.DebugProxy {
     ///   - rect: The area of the image from which to gather the statistics. Defaults to the whole image.
     ///   - colorSpace: The export color space used during rendering. If `nil`, the export color space of the context is used.
     /// - Returns: An `ImageStatistics` containing the statistical values.
-    @available(iOS 12.0, macOS 10.5, macCatalyst 13.0, tvOS 12.0, *)
     func statistics(in rect: CGRect? = nil, colorSpace: CGColorSpace? = nil) -> ImageStatistics {
         let rect = rect ?? self.image.extent
         guard !rect.isInfinite else {

@@ -18,7 +18,6 @@ extension CIImage {
     ///   - color: The color of the text. The background of the text will be transparent. Defaults to black.
     ///   - padding: A padding to add around the text, effectively increasing the text's virtual `extent`. Default is no padding.
     /// - Returns: An image containing the rendered text.
-    @available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
     public static func text(_ text: String, fontName: String = "HelveticaNeue", fontSize: CGFloat = 12.0, color: CIColor = .black, padding: CGFloat = 0.0) -> CIImage? {
         guard let textGenerator = CIFilter(name: "CITextImageGenerator") else { return nil }
 
@@ -63,7 +62,6 @@ extension CIImage {
     ///   - color: The color of the text. The background of the text will be transparent.
     ///   - padding: A padding to add around the text, effectively increasing the text's virtual `extent`.
     /// - Returns: An image containing the rendered text.
-    @available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
     public static func text(_ text: String, font: UIFont, color: CIColor = .black, padding: CGFloat = 0.0) -> CIImage? {
         return self.text(text, fontName: font.fontName, fontSize: font.pointSize, color: color, padding: padding)
     }
@@ -75,7 +73,6 @@ extension CIImage {
     ///   - attributedText: The `NSAttributedString` to render.
     ///   - padding: A padding to add around the text, effectively increasing the text's virtual `extent`.
     /// - Returns: An image containing the rendered attributed text
-    @available(iOS 11.0, macCatalyst 13.1, macOS 10.13, tvOS 11.0, *)
     public static func attributedText(_ attributedText: NSAttributedString, padding: CGFloat = 0.0) -> CIImage? {
         guard let textGenerator = CIFilter(name: "CIAttributedTextImageGenerator") else { return nil }
 
