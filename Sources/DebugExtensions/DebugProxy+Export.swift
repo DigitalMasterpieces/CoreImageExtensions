@@ -22,9 +22,11 @@ public extension CIImage.DebugProxy {
     ///                 Note that it needs to match the chosen `format`, i.e., a single-channel format needs a grayscale color space.
     func export(filePrefix: String? = nil, codec: ImageCodec = .tiff, format: CIFormat = .RGBA8, quality: Float = 1.0, colorSpace: CGColorSpace? = nil) {
         let filePrefix = exportFilePrefix(filePrefix: filePrefix)
-        openSavePanel(message: "Select folder where to save the image") { url in
-            let imageURL = url.appendingPathComponent("\(filePrefix)_image").appendingPathExtension(codec.fileExtension)
-            self.write(to: imageURL, codec: codec, format: format, quality: quality, colorSpace: colorSpace)
+        Task {
+            await openSavePanel(message: "Select folder where to save the image") { url in
+                let imageURL = url.appendingPathComponent("\(filePrefix)_image").appendingPathExtension(codec.fileExtension)
+                self.write(to: imageURL, codec: codec, format: format, quality: quality, colorSpace: colorSpace)
+            }
         }
     }
 
@@ -37,9 +39,11 @@ public extension CIImage.DebugProxy.RenderResult {
     /// - Parameter filePrefix: A prefix that is added to the files. By default, the name of the app is used.
     func export(filePrefix: String? = nil) {
         let filePrefix = exportFilePrefix(filePrefix: filePrefix)
-        openSavePanel(message: "Select folder where to save the render results") { url in
-            // Write rendering results into the picked folder.
-            self.writeResults(to: url, with: filePrefix)
+        Task {
+            await openSavePanel(message: "Select folder where to save the render results") { url in
+                // Write rendering results into the picked folder.
+                self.writeResults(to: url, with: filePrefix)
+            }
         }
     }
 
@@ -49,7 +53,7 @@ public extension CIImage.DebugProxy.RenderResult {
 /// - Parameters:
 ///   - message: A message to display on top of the panel.
 ///   - callback: A callback for writing the files to the chosen URL.
-private func openSavePanel(message: String, callback: @escaping (URL) -> Void) {
+@MainActor private func openSavePanel(message: String, callback: @escaping (URL) -> Void) {
     // Use the system panel for picking the folder where to save the files.
     let openPanel = NSOpenPanel()
     openPanel.message = message
@@ -88,7 +92,9 @@ public extension CIImage.DebugProxy {
         let filePrefix = exportFilePrefix(filePrefix: filePrefix)
         let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(filePrefix)_image").appendingPathExtension(codec.fileExtension)
         self.write(to: fileURL, codec: codec, format: format, quality: quality, colorSpace: colorSpace)
-        openShareSheet(for: [fileURL])
+        Task {
+            await openShareSheet(for: [fileURL])
+        }
     }
 
 }
@@ -101,14 +107,16 @@ public extension CIImage.DebugProxy.RenderResult {
     func export(filePrefix: String? = nil) {
         let filePrefix = exportFilePrefix(filePrefix: filePrefix)
         let shareItems = self.writeResults(to: FileManager.default.temporaryDirectory, with: filePrefix)
-        openShareSheet(for: shareItems)
+        Task {
+            await openShareSheet(for: shareItems)
+        }
     }
 
 }
 
 /// Opens a share sheet for exporting the given files from the application's main window.
 /// - Parameter items: A list of files to export. The files will be either moved or deleted after successful export.
-private func openShareSheet(for items: [URL]) {
+@MainActor private func openShareSheet(for items: [URL]) {
     let window = UIApplication.shared.windows.first
 
     if #available(iOS 14, *), ProcessInfo().isMacCatalystApp || ProcessInfo().isiOSAppOnMac {
