@@ -6,6 +6,7 @@ public extension CIImage.DebugProxy {
 
     /// A wrapper around a `Pixel` value that offers better human-readable
     /// description and introspection of its values.
+    @dynamicMemberLookup
     struct DebugPixel<Scalar: SIMDScalar>: CustomStringConvertible, CustomReflectable {
         let value: Pixel<Float32>
 
@@ -13,10 +14,10 @@ public extension CIImage.DebugProxy {
             self.value = value
         }
 
-        public var r: Float32 { self.value.r }
-        public var g: Float32 { self.value.g }
-        public var b: Float32 { self.value.b }
-        public var a: Float32 { self.value.a }
+        // Forward accessors and methods to inner `value`.
+        subscript<T>(dynamicMember keyPath: KeyPath<Pixel<Float32>, T>) -> T {
+            value[keyPath: keyPath]
+        }
 
         /// Formates the pixel component values to 3 fraction digits and with aligned sign prefix.
         private var formattedValues: (r: String, g: String, b: String, a: String) {
