@@ -114,7 +114,7 @@ public extension CIImage.DebugProxy.RenderResult {
 
 }
 
-/// Opens a share sheet for exporting the given files from the application's main window.
+/// Opens a share sheet (or document picker on Catalyst) for exporting the given files from the application's main window.
 /// - Parameter items: A list of files to export. The files will be either moved or deleted after successful export.
 @MainActor private func openShareSheet(for items: [URL]) {
     let window = UIApplication.shared.windows.first
