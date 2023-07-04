@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "CoreImageExtensions",
-    platforms: [.iOS(.v10), .macOS(.v10_15), .tvOS(.v10)],
+    platforms: [.iOS(.v13), .macOS(.v10_15), .tvOS(.v13)],
     products: [
         .library(
             name: "CoreImageExtensions",
