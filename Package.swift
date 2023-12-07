@@ -17,8 +17,9 @@ let package = Package(
     targets: [
         .target(
             name: "CoreImageExtensions",
-            dependencies: [],
-            path: "Sources"),
+            dependencies: [], 
+            path: "Sources",
+            cxxSettings: [.define("CI_SILENCE_GL_DEPRECATION")]),
         .testTarget(
             name: "CoreImageExtensionsTests",
             dependencies: ["CoreImageExtensions"],
