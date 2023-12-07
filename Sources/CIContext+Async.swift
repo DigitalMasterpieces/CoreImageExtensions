@@ -1,14 +1,13 @@
 import CoreImage
 
 
-private var ASSOCIATED_ACTOR_KEY = "CoreImageExtensions.CIContext.async"
-
-
 public extension CIContext {
 
     /// An actor for synchronizing calls to a `CIContext` and executing them in the background.
     /// The `Actor` instance associated with a context can be accessed via ``CIContext/async``.
     actor Actor {
+
+        fileprivate static var ASSOCIATED_ACTOR_KEY = malloc(1)!
 
         /// The "wrapped" context instance.
         public private(set) weak var context: CIContext!
@@ -185,12 +184,12 @@ public extension CIContext {
     /// will be synchronized and happen asynchronous in the background.
     var async: Actor {
         // check if we already have an Actor created for this context...
-        if let actor = objc_getAssociatedObject(self, &ASSOCIATED_ACTOR_KEY) as? Actor {
+        if let actor = objc_getAssociatedObject(self, &Actor.ASSOCIATED_ACTOR_KEY) as? Actor {
             return actor
         // ... otherwise create a new one and safe it as associated object
         } else {
             let actor = Actor(self)
-            objc_setAssociatedObject(self, &ASSOCIATED_ACTOR_KEY, actor, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            objc_setAssociatedObject(self, &Actor.ASSOCIATED_ACTOR_KEY, actor, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
             return actor
         }
     }

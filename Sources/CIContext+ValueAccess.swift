@@ -99,7 +99,13 @@ extension CIContext {
 
         var values = Array(repeating: defaultValue, count: Int(rect.width * rect.height))
         let rowBytes = MemoryLayout<PixelType>.size * Int(rect.width)
-        self.render(image, toBitmap: &values, rowBytes: rowBytes, bounds: rect, format: format, colorSpace: colorSpace)
+        values.withUnsafeMutableBytes { values in
+            guard let baseAddress = values.baseAddress else {
+                assertionFailure("Failed to get pointer to return buffer")
+                return
+            }
+            self.render(image, toBitmap: baseAddress, rowBytes: rowBytes, bounds: rect, format: format, colorSpace: colorSpace)
+        }
         return values
     }
 
